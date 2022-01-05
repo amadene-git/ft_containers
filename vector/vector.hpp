@@ -1,3 +1,6 @@
+#ifndef VECTOR_HPP
+#define VECTOR_HPP
+
 #include <iostream>
 #include <memory>
 
@@ -35,27 +38,27 @@ difference_type	a signed integral type, identical to: iterator_traits<iterator>:
 
 
 
-
-
+//			MEMBER FUNCTION PUBLIC
 //		CONSTRUCTOR
 
 		explicit vector (const allocator_type& alloc = allocator_type())
 		{
-			std::cout << "Default constructor called ->" << this << std::endl;
+			std::cout << "Vector Default constructor called ->" << this << std::endl;
 			_alloc = alloc;
 			_ptr = _alloc.allocate(0);
 			_size = 0;
+			_capacity = 0;
 		};
 		
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
-			std::cout << "Fill constructor called ->" << this << std::endl;			
+			std::cout << "Vector Fill constructor called ->" << this << std::endl;			
 			_alloc = alloc;
 			_ptr = _alloc.allocate(n);
 			_size = n;
+			_capacity = n;
 			for (size_type i = 0; i < n; i++)
-				_alloc.construct(_ptr + i, val); 
-
+				_alloc.construct(_ptr + i, val);
 		};
 /*
 range (3)	
@@ -67,7 +70,7 @@ vector (const vector& x);
 */
 		~vector()
 		{
-			std::cout << "Default destructor called ->" << this << std::endl;
+			std::cout << "Vector Default destructor called ->" << this << std::endl;
 
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_ptr + i);
@@ -75,9 +78,6 @@ vector (const vector& x);
 		};
 
 
-
-
-//			MEMBER FUNCTION PUBLIC
 //		ACCESS
 		//out of range exception throw
 		reference at (size_type n)
@@ -104,13 +104,65 @@ vector (const vector& x);
 		reference		operator[] (size_type n)		{ return (*(_ptr + n)); };
 		const_reference	operator[] (size_type n) const	{ return (*(_ptr + n)); };
 
+
+//		CAPACITY	
+		size_type	size()		const	{ return (_size); };
+		size_type	max_size() 	const	{ return (_alloc.max_size()); };
+		size_type	capacity() 	const	{ return (_capacity); };
+		bool		empty() 	const	{ return ((_size == 0) ? true : false); };
+
+		void resize (size_type n, value_type val = value_type())//if it has to reallocate storage, all iterators, pointers and references related to this container are also invalidated.
+		{
+			if (n > _alloc.max_size())
+					throw (std::length_error("vector::resize"));
+			while (n < _size)
+				_alloc.destroy(_ptr + --_size);
+			if (n > _capacity)
+			{
+				pointer	tmp;//alloc new obj
+				// std::cout << "1\n" << std::endl;
+				_capacity = (!_capacity) ? 1 : _capacity;
+				while (n > _capacity)
+					_capacity *= 2;
+				tmp = _alloc.allocate(_capacity);
+				// std::cout << "2\n" << std::endl;
+				
+				//fill it
+				for (size_type i = 0; i < _size; i++)
+					_alloc.construct(tmp + i, *(_ptr + i));
+				for (size_type i = _size; i < n; i++)
+					_alloc.construct(tmp + i, val);
+				// std::cout << "3\n" << std::endl;
+				
+				//destroy old one
+				for (size_type i = 0; i < _size; i++)
+					_alloc.destroy(_ptr + i);
+				_alloc.deallocate(_ptr, _size);
+				// std::cout << "4\n" << std::endl;
+				
+				_size = n;
+				_ptr = tmp;//en vrai je dois pas faire ca, oublie pas de revenir dessus Adrien
+			}
+			else if (n > _size)
+			{
+				for (size_type i = _size; i < n; i++)
+					_alloc.construct(_ptr + i, val);
+			}
+		};
+
+
+/*
+reserve
+Request a change in capacity (public member function )
+*/
 	
 //	private:
 		allocator_type	_alloc;
 		pointer			_ptr;
 		size_type		_size;
+		size_type		_capacity;
 
 	};
 }
 
-
+#endif
