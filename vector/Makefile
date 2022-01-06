@@ -3,7 +3,8 @@ NAME = out
 CC = clang++
 CC_FLAGS = -g  -Wall -Wextra -Werror -std=c++98 -Wfatal-errors -Wpedantic -Wconversion -Wshadow
 
-SRCS = $(wildcard *.cpp)
+SRCS = ft_main.cpp
+MAIN = main.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 OBJS_DIR = ./objs

@@ -12,7 +12,7 @@ class A
 		char	*str;
 };
 
-void    vector_contain(std::vector<int> &myvector)
+void    vector_contain(ft::vector<int> &myvector)
 {
 	std::cout << "myvector contains:";
 	for (size_t i = 0; i < myvector.size(); i++)
@@ -23,7 +23,6 @@ void    vector_contain(std::vector<int> &myvector)
 	std::cout << "capacity: " << myvector.capacity() << "\n";
 	std::cout << "max_size: " << myvector.max_size() << "\n\n";    
 }
-
 int main()
 {
 	// Vector
@@ -31,7 +30,7 @@ int main()
 	{
 		std::cout << std::endl << "//		AT" << std::endl;
 		{
-			std::vector<int> myvector (10);   // 10 zero-initialized ints
+			ft::vector<int> myvector (10);   // 10 zero-initialized ints
 
 			// assign some values:
 			for (size_t i = 0; i < myvector.size(); i++)
@@ -48,7 +47,7 @@ int main()
 
 		std::cout << std::endl << "//		FRONT" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 
 			myvector.push_back(78);
 			myvector.push_back(16);
@@ -65,7 +64,7 @@ int main()
 
 		std::cout << std::endl << "//		BACK" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 
 			myvector.push_back(10);
 
@@ -84,8 +83,8 @@ int main()
 
 		std::cout << std::endl << "//		OPERATOR []" << std::endl;
 		{
-			std::vector<int> myvector (10);   // 10 zero-initialized elements
-			std::vector<int>::size_type sz = myvector.size();
+			ft::vector<int> myvector (10);   // 10 zero-initialized elements
+			ft::vector<int>::size_type sz = myvector.size();
 
 			// assign some values:
 			for (size_t i = 0; i < sz; i++) myvector[i] = static_cast<int>(i);
@@ -114,7 +113,7 @@ int main()
 
 		std::cout << std::endl << "//		SIZE" << std::endl;
 		{
-			std::vector<int> myints;
+			ft::vector<int> myints;
 			std::cout << "0. size: " << myints.size() << '\n';
 
 			for (int i=0; i<10; i++) myints.push_back(i);
@@ -137,7 +136,7 @@ int main()
 		std::cout << std::endl << "//		MAX_SIZE & CAPACITY" << std::endl;
 		{
 
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 
 			// set some content in the vector:
 			for (int i=0; i<100; i++) myvector.push_back(i);
@@ -154,7 +153,7 @@ max_size: 1073741823*/
 
 		std::cout << std::endl << "//		EMPTY" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 			int sum (0);
 
 			for (size_t i = 1; i <= 10; i++) myvector.push_back(static_cast<int>(i));
@@ -173,7 +172,7 @@ total: 55*/
 
 		std::cout << std::endl << "//		RESIZE" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 			vector_contain(myvector);
 			// set some initial content:
 			//	for (int i=1;i<10;i++) myvector.push_back(i);
@@ -187,7 +186,7 @@ total: 55*/
 			myvector.resize(12);
 			vector_contain(myvector);
 
-			std::vector<int>	bar;
+			ft::vector<int>	bar;
 			size_t sz = bar.capacity();
 			for (size_t i = 0; i < 300; i += 5)
 			{
@@ -201,9 +200,9 @@ total: 55*/
 		}
 		std::cout << std::endl << "//		RESERVE" << std::endl;
 		{
-			std::vector<int>::size_type sz;
+			ft::vector<int>::size_type sz;
 
-			std::vector<int> foo;
+			ft::vector<int> foo;
 			sz = foo.capacity();
 			std::cout << "making foo grow:\n";
 			for (int i=0; i<100; ++i) {
@@ -214,7 +213,7 @@ total: 55*/
 				}
 			}
 
-			std::vector<int> bar;
+			ft::vector<int> bar;
 			sz = bar.capacity();
 			bar.reserve(100);   // this is the only difference with foo above
 			std::cout << "making bar grow:\n";
