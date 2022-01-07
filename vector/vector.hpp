@@ -43,7 +43,7 @@ difference_type	a signed integral type, identical to: iterator_traits<iterator>:
 
 		explicit vector(const allocator_type& alloc = allocator_type())
 		{
-			std::cout << "Vector Default constructor called ->" << this << std::endl;
+			// std::cout << "Vector Default constructor called ->" << this << std::endl;
 			_alloc = alloc;
 			_ptr = _alloc.allocate(0);
 			_size = 0;
@@ -52,7 +52,7 @@ difference_type	a signed integral type, identical to: iterator_traits<iterator>:
 		
 		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
-			std::cout << "Vector Fill constructor called ->" << this << std::endl;			
+			// std::cout << "Vector Fill constructor called ->" << this << std::endl;			
 			_alloc = alloc;
 			_ptr = _alloc.allocate(n);
 			_size = n;
@@ -70,7 +70,7 @@ vector (const vector& x);
 */
 		~vector()
 		{
-			std::cout << "Vector Default destructor called ->" << this << std::endl;
+			// std::cout << "Vector Default destructor called ->" << this << std::endl;
 
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_ptr + i);
@@ -98,8 +98,8 @@ vector (const vector& x);
 		reference		front()			{ return (*_ptr); };
 		const_reference	front() const	{ return (*_ptr); };
 
-		reference		back()			{ return (*(_ptr + _size)); };
-		const_reference	back() const	{ return (*(_ptr + _size)); };
+		reference		back()			{ return (*(_ptr + _size - 1)); };
+		const_reference	back() const	{ return (*(_ptr + _size - 1)); };
 	
 		reference		operator[] (size_type n)		{ return (*(_ptr + n)); };
 		const_reference	operator[] (size_type n) const	{ return (*(_ptr + n)); };
@@ -111,48 +111,6 @@ vector (const vector& x);
 		size_type	capacity() 	const	{ return (_capacity); };
 		bool		empty() 	const	{ return ((_size == 0) ? true : false); };
 
-		void resize(size_type n, value_type val = value_type())//if it has to reallocate storage, all iterators, pointers and references related to this container are also invalidated.
-		{
-			if (n > _alloc.max_size())
-					throw (std::length_error("vector::resize"));
-			while (n < _size)
-				_alloc.destroy(_ptr + --_size);
-			if (n > _capacity)
-			{
-				pointer		tmp;//alloc new obj
-				size_type	old_capacity = _capacity;
-				std::cout << "1\n" << std::endl;
-				_capacity = (!_capacity) ? n : _capacity;
-				while (n > _capacity)
-					_capacity *= 2;
-				std::cout << "capacity :" << _capacity << "|"<< std::endl;
-				tmp = _alloc.allocate(_capacity);
-				std::cout << "2\n" << std::endl;
-				
-				//fill it
-				for (size_type i = 0; i < _size; i++)
-					_alloc.construct(tmp + i, *(_ptr + i));
-				for (size_type i = _size; i < n; i++)
-					_alloc.construct(tmp + i, val);
-				std::cout << "3\n" << std::endl;
-				
-				//destroy old one
-				for (size_type i = 0; i < _size; i++)
-					_alloc.destroy(_ptr + i);
-				_alloc.deallocate(_ptr, old_capacity);
-				std::cout << "4\n" << std::endl;
-				
-				_size = n;
-				_ptr = tmp;//en vrai je dois pas faire ca, oublie pas de revenir dessus Adrien
-			}
-			else if (n > _size)
-			{
-				for (size_type i = _size; i < n; i++)
-					_alloc.construct(_ptr + i, val);
-				_size = n;
-			}
-		};
-
 		void	reserve(size_type n)
 		{
 			if (n > _alloc.max_size())
@@ -160,10 +118,8 @@ vector (const vector& x);
 			if (n > _capacity)
 			{
 				pointer		tmp;//alloc new obj
-				size_type	old_capacity = _capacity;
 
-				_capacity = n;
-				tmp = _alloc.allocate(_capacity);
+				tmp = _alloc.allocate(n);
 				
 				//fill it
 				for (size_type i = 0; i < _size; i++)
@@ -172,19 +128,37 @@ vector (const vector& x);
 				//destroy old one
 				for (size_type i = 0; i < _size; i++)
 					_alloc.destroy(_ptr + i);
-				_alloc.deallocate(_ptr, old_capacity);
+				_alloc.deallocate(_ptr, _capacity);
 				
 				_ptr = tmp;
+				_capacity = n;
 			}
+		};
+
+		void resize(size_type n, value_type val = value_type())//if it has to reallocate storage, all iterators, pointers and references related to this container are also invalidated.
+		{
+			if (n > _alloc.max_size())
+					throw (std::length_error("vector::resize"));
+			while (n < _size)
+				_alloc.destroy(_ptr + --_size);
+			
+			//gestion de _capacity == 0
+			if (n && !_capacity)
+				this->reserve(n);
+			if (n > _capacity)
+				while (n > _capacity)
+					this->reserve(_capacity * 2);
+
+			for (size_type i = _size; i < n; i++)
+				_alloc.construct(_ptr + i, val);
+								
+			_size = n;
 		};
 
 //		MODIFIERS
 		void	push_back(const value_type& val)
 		{
-			if (_size == _capacity)
-				this->reserve(_capacity * 2);
-			_alloc.construct(_ptr + _size, val);
-			++_size;
+			this->resize(_size + 1, val);
 		};
 		void	pop_back()
 		{
@@ -192,17 +166,33 @@ vector (const vector& x);
 				_alloc.destroy(_ptr + (--_size));
 		};
 
+		void	swap(vector& x)
+		{
+			allocator_type	tmp_alloc = _alloc;
+			pointer			tmp_ptr = _ptr;
+			size_type		tmp_size = _size;
+			size_type		tmp_capacity = _capacity;
+
+			_alloc = x._alloc;
+			_ptr = x._ptr;
+			_size = x._size;
+			_capacity = x._capacity;
+
+			x._alloc = tmp_alloc;
+			x._ptr = tmp_ptr;
+			x._size = tmp_size;
+			x._capacity = tmp_capacity;
+
+		
+		};
+
 
 /*assign
 Assign vector content (public member function )
-pop_back
-Delete last element (public member function )
 insert
 Insert elements (public member function )
 erase
 Erase elements (public member function )
-swap
-Swap content (public member function )
 clear
 Clear content (public member function )*/
 

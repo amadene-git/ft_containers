@@ -3,8 +3,7 @@ NAME = out
 CC = clang++
 CC_FLAGS = -g  -Wall -Wextra -Werror -std=c++98 -Wfatal-errors -Wpedantic -Wconversion -Wshadow
 
-SRCS = ft_main.cpp
-MAIN = main.cpp
+SRCS = main.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 OBJS_DIR = ./objs
@@ -20,11 +19,48 @@ $(OBJS_DIR)/%.o	:	%.cpp
 						@mkdir -p $(@D)
 						$(CC) $(CC_FLAGS) ${HEADER} -MMD -c $< -o $@
 
+
+
+
+
+
+
+
+
+TESTNAME	= testout
+TESTSRCS = test_${SRCS}
+
+TESTOBJS = $(TESTSRCS:%.cpp=$(OBJS_DIR)/%.o)
+TESTDEP = $(TESTOBJS:%.o=%.d)
+
+test			:   ${TESTNAME}
+					./${NAME} 		> 	${NAME}.ret
+					./${TESTNAME} 	> 	${TESTNAME}.ret 
+					@diff out.ret testout.ret
+					@make fclean
+					@echo "\033[0;32m"TEST OK !	
+${TESTSRCS}		:
+						@make re
+						@cp ${SRCS} ${TESTSRCS} ; sed -i s/ft::vector/std::vector/g ${TESTSRCS}
+
+${TESTOBJS}		:	${TESTSRCS}
+
+
+$(TESTNAME) 		: 	$(TESTOBJS)	
+						@mkdir -p $(@D)
+						$(CC) $(CC_FLAGS) $^ -o $@
+-include $(TESTDEP)
+$(OBJS_DIR)/%.o	:	%.cpp
+						@mkdir -p $(@D)
+						$(CC) $(CC_FLAGS) ${HEADER} -MMD -c $< -o $@
+
+
+
 clean	:
 				rm -rf $(OBJS_DIR)
 fclean	:	clean
-				rm -rf ${NAME}
+				rm -rf ${NAME} ${TESTNAME} ${NAME}.ret ${TESTNAME}.ret ${TESTSRCS}
 re		:	fclean
-				make all
+				@make all
 
-.PHONY : all clean fclean re
+.PHONY : all clean fclean re test

@@ -12,7 +12,7 @@ class A
 		char	*str;
 };
 
-void    vector_contain(std::vector<int> &myvector)
+void    vector_contain(ft::vector<int> &myvector)
 {
 	std::cout << "myvector contains:";
 	for (size_t i = 0; i < myvector.size(); i++)
@@ -23,7 +23,6 @@ void    vector_contain(std::vector<int> &myvector)
 	std::cout << "capacity: " << myvector.capacity() << "\n";
 	std::cout << "max_size: " << myvector.max_size() << "\n\n";    
 }
-
 int main()
 {
 	// Vector
@@ -31,9 +30,8 @@ int main()
 	{
 		std::cout << std::endl << "//		AT" << std::endl;
 		{
-			std::vector<int> myvector (10);   // 10 zero-initialized ints
+			ft::vector<int> myvector (10);   // 10 zero-initialized ints
 
-			// assign some values:
 			for (size_t i = 0; i < myvector.size(); i++)
 				myvector.at(i) = static_cast<int>(i);
 
@@ -42,30 +40,26 @@ int main()
 				std::cout << ' ' << myvector.at(i);
 			std::cout << '\n';
 
-			/*Output:
-			  myvector contains: 0 1 2 3 4 5 6 7 8 9*/
 		}
 
 		std::cout << std::endl << "//		FRONT" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 
 			myvector.push_back(78);
 			myvector.push_back(16);
 
-			// now front equals 78, and back 16
+
 
 			myvector.front() -= myvector.back();
 
 			std::cout << "myvector.front() is now " << myvector.front() << '\n';
 
-			/*Output:
-			  myvector.front() is now 62*/
 		}
 
 		std::cout << std::endl << "//		BACK" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 
 			myvector.push_back(10);
 
@@ -78,19 +72,15 @@ int main()
 			for (size_t i=0; i<myvector.size() ; i++)
 				std::cout << ' ' << myvector[i];
 			std::cout << '\n';
-			/*Output:
-			  myvector contains: 10 9 8 7 6 5 4 3 2 1 0*/
 		}
 
 		std::cout << std::endl << "//		OPERATOR []" << std::endl;
 		{
-			std::vector<int> myvector (10);   // 10 zero-initialized elements
-			std::vector<int>::size_type sz = myvector.size();
+			ft::vector<int> myvector (10);   // 10 zero-initialized elements
+			ft::vector<int>::size_type sz = myvector.size();
 
-			// assign some values:
 			for (size_t i = 0; i < sz; i++) myvector[i] = static_cast<int>(i);
 
-			// reverse vector using operator[]:
 			for (size_t i = 0; i < sz / 2; i++)
 			{
 				int temp;
@@ -103,8 +93,6 @@ int main()
 			for (size_t i = 0; i < sz; i++)
 				std::cout << ' ' << myvector[i];
 			std::cout << '\n';
-			/*Output:
-			  myvector contains: 9 8 7 6 5 4 3 2 1 0*/
 		}
 
 	}
@@ -114,30 +102,22 @@ int main()
 
 		std::cout << std::endl << "//		SIZE" << std::endl;
 		{
-			std::vector<int> myints;
+			ft::vector<int> myints;
 			std::cout << "0. size: " << myints.size() << '\n';
 
 			for (int i=0; i<10; i++) myints.push_back(i);
 			std::cout << "1. size: " << myints.size() << '\n';
 
-		//	myints.insert (myints.end(),10,100);
 			std::cout << "2. size: " << myints.size() << '\n';
 
-		//	myints.pop_back();
 			std::cout << "3. size: " << myints.size() << '\n';
-
-			/*Output:
-			  0. size: 0
-			  1. size: 10
-			  2. size: 20
-			  3. size: 19*/
 
 		}
 
 		std::cout << std::endl << "//		MAX_SIZE & CAPACITY" << std::endl;
 		{
 
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 
 			// set some content in the vector:
 			for (int i=0; i<100; i++) myvector.push_back(i);
@@ -146,15 +126,11 @@ int main()
 			std::cout << "capacity: " << myvector.capacity() << "\n";
 			std::cout << "max_size: " << myvector.max_size() << "\n";
 
-			/*Output:
-size: 100
-capacity: 128
-max_size: 1073741823*/
 		}
 
 		std::cout << std::endl << "//		EMPTY" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 			int sum (0);
 
 			for (size_t i = 1; i <= 10; i++) myvector.push_back(static_cast<int>(i));
@@ -166,17 +142,13 @@ max_size: 1073741823*/
 			}
 
 			std::cout << "total: " << sum << '\n';
-			/*Output:
-total: 55*/
 
 		}
 
 		std::cout << std::endl << "//		RESIZE" << std::endl;
 		{
-			std::vector<int> myvector;
+			ft::vector<int> myvector;
 			vector_contain(myvector);
-			// set some initial content:
-			//	for (int i=1;i<10;i++) myvector.push_back(i);
 
 			myvector.resize(2);
 			vector_contain(myvector);
@@ -187,7 +159,7 @@ total: 55*/
 			myvector.resize(12);
 			vector_contain(myvector);
 
-			std::vector<int>	bar;
+			ft::vector<int>	bar;
 			size_t sz = bar.capacity();
 			for (size_t i = 0; i < 300; i += 5)
 			{
@@ -201,9 +173,9 @@ total: 55*/
 		}
 		std::cout << std::endl << "//		RESERVE" << std::endl;
 		{
-			std::vector<int>::size_type sz;
+			ft::vector<int>::size_type sz;
 
-			std::vector<int> foo;
+			ft::vector<int> foo;
 			sz = foo.capacity();
 			std::cout << "making foo grow:\n";
 			for (int i=0; i<100; ++i) {
@@ -214,21 +186,83 @@ total: 55*/
 				}
 			}
 
-			std::vector<int> bar;
+			ft::vector<int> bar;
 			sz = bar.capacity();
 			bar.reserve(100);   // this is the only difference with foo above
 			std::cout << "making bar grow:\n";
 			for (int i=0; i<300; ++i) {
 				bar.push_back(i);
-				if (sz!=bar.capacity()) {
+				if (sz!=bar.capacity())
+				{
 					sz = bar.capacity();
 					std::cout << "capacity changed: " << sz << '\n';
 				}
 			}
+		}
+	}
 
+	std::cout << std::endl << std::endl << "//	MODIFIERS";
+	{
+		std::cout << std::endl << "//		PUSH_BACK" << std::endl;
+		{
+			ft::vector<int> myvector;
+		//	int myint;
+
+		//	std::cout << "Please enter some integers (enter 0 to end):\n";
+
+			int i = 0;
+			do {
+				myvector.push_back (42);
+			} while (++i < 100);
+
+			std::cout << "myvector stores " << int(myvector.size()) << " numbers.\n";
+		}
+
+		std::cout << std::endl << "//		POP_BACK" << std::endl;
+		{
+			ft::vector<int> myvector;
+			int sum (0);
+			myvector.push_back (100);
+			myvector.push_back (200);
+			myvector.push_back (300);
+
+			while (!myvector.empty())
+			{
+				sum+=myvector.back();
+				myvector.pop_back();
+			}
+
+			std::cout << "The elements of myvector add up to " << sum << '\n';
+		}
+		std::cout << std::endl << "//		SWAP" << std::endl;
+		{
+			ft::vector<int> foo (4,100);   // three ints with a value of 100
+			ft::vector<int> bar (16,200);   // five ints with a value of 200
+
+			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
+
+			foo.swap(bar);
+
+			std::cout << "foo contains:";
+			for (unsigned i=0; i<foo.size(); i++)
+				std::cout << ' ' << foo[i];
+			std::cout << '\n';
+
+			std::cout << "bar contains:";
+			for (unsigned i=0; i<bar.size(); i++)
+				std::cout << ' ' << bar[i];
+			std::cout << '\n';
+			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
 
 		}
 
-	}
 
+
+
+
+
+
+
+
+	}
 }
