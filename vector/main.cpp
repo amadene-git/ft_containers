@@ -206,9 +206,9 @@ int main()
 		std::cout << std::endl << "//		PUSH_BACK" << std::endl;
 		{
 			ft::vector<int> myvector;
-		//	int myint;
+			//	int myint;
 
-		//	std::cout << "Please enter some integers (enter 0 to end):\n";
+			//	std::cout << "Please enter some integers (enter 0 to end):\n";
 
 			int i = 0;
 			do {
@@ -255,8 +255,28 @@ int main()
 			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
 
 		}
+		std::cout << std::endl << "//		BEGIN" << std::endl;
+		{
+			ft::vector<int> myvector;
+			for (int i=1; i<=7; i++) myvector.push_back(i);
 
+			std::cout << "size :" << myvector.size() << std::endl;
+			std::cout << "capacity :" << myvector.capacity() << std::endl;
+			std::cout << "myvector contains:";
+			for (ft::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+				std::cout << ' ' << *it;
+			std::cout << '\n';
+		}
+		std::cout << std::endl << "//		RANDOM ZONE" << std::endl;
+		{
+			ft::vector<int> vect;
+			for (int i = 0; i < 12; i++)
+				vect.push_back(i);
+			ft::vector<int>::iterator foo = vect.begin() + 2;
+			ft::vector<int>::iterator bar = vect.begin() + 4;
+			std::cout << bar - foo << std::endl;
 
+		}
 
 
 

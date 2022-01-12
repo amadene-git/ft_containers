@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include "iterator.hpp"
 
 namespace ft
 {
@@ -11,9 +12,7 @@ namespace ft
 	{
 	public:
 
-
 //		MEMBER_TYPE
-
 		typedef 			T								value_type;	
 
 		typedef 			Allocator						allocator_type;	
@@ -28,24 +27,29 @@ namespace ft
 
 		typedef	typename	allocator_type::size_type		size_type;
 
+		
+		typedef typename 	ft::random_access_iterator<T>		iterator;
+		typedef	typename	ft::random_access_iterator<const T>	const_iterator;
+		
+		
+		typedef typename 	ft::random_access_iterator<T>::difference_type	difference_type;// a corriger -> iterator_trait<iterator>::difference_type
+
+
 /*
-iterator	a random access iterator to value_type	convertible to const_iterator
-const_iterator	a random access iterator to const value_type	
 reverse_iterator	reverse_iterator<iterator>	
 const_reverse_iterator	reverse_iterator<const_iterator>	
-difference_type	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
 */	
 
 
 
 //			MEMBER FUNCTION PUBLIC
 //		CONSTRUCTOR
-
 		explicit vector(const allocator_type& alloc = allocator_type())
 		{
 			// std::cout << "Vector Default constructor called ->" << this << std::endl;
 			_alloc = alloc;
-			_ptr = _alloc.allocate(0);
+			// _ptr = _alloc.allocate(0);
+			_ptr = NULL;
 			_size = 0;
 			_capacity = 0;
 		};
@@ -80,14 +84,13 @@ vector (const vector& x);
 
 //		ACCESS
 		//out of range exception throw
-		reference at(size_type n)
+		reference		at(size_type n)
 		{
 			if (n >= _size)
 				throw std::out_of_range("Exception: vector::at() out of range\n");
 			return (*(_ptr + n ));
 		};
-
-		const_reference at(size_type n) const
+		const_reference	at(size_type n) const
 		{
 			if (n >= _size)
 				throw std::out_of_range("Exception: const vector::at() out of range\n");
@@ -182,8 +185,6 @@ vector (const vector& x);
 			x._ptr = tmp_ptr;
 			x._size = tmp_size;
 			x._capacity = tmp_capacity;
-
-		
 		};
 
 
@@ -195,6 +196,30 @@ erase
 Erase elements (public member function )
 clear
 Clear content (public member function )*/
+
+//		ITERATOR
+		iterator 		begin() 		{ return (_ptr); };
+		const_iterator	begin() const	{ return (_ptr); };
+		
+		iterator		end()
+		{
+			if (this->empty())
+				return (_ptr);
+			return (_ptr + _size);
+		};
+		const_iterator	end() const
+		{
+			if (this->empty())
+				return (_ptr);
+			return (_ptr + _size);
+		};
+
+/*
+rbegin
+Return reverse iterator to reverse beginning (public member function )
+rend
+Return reverse iterator to reverse end (public member function )*/
+
 
 //	private:
 		allocator_type	_alloc;

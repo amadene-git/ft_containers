@@ -34,8 +34,8 @@ TESTOBJS = $(TESTSRCS:%.cpp=$(OBJS_DIR)/%.o)
 TESTDEP = $(TESTOBJS:%.o=%.d)
 
 test			:   ${TESTNAME}
-					./${NAME} 		> 	${NAME}.ret
-					./${TESTNAME} 	> 	${TESTNAME}.ret 
+					@./${NAME} 		> 	${NAME}.ret
+					@./${TESTNAME} 	> 	${TESTNAME}.ret 
 					@diff out.ret testout.ret
 					@make fclean
 					@echo "\033[0;32m"TEST OK !	
@@ -48,18 +48,19 @@ ${TESTOBJS}		:	${TESTSRCS}
 
 $(TESTNAME) 		: 	$(TESTOBJS)	
 						@mkdir -p $(@D)
-						$(CC) $(CC_FLAGS) $^ -o $@
+						@$(CC) $(CC_FLAGS) $^ -o $@
 -include $(TESTDEP)
 $(OBJS_DIR)/%.o	:	%.cpp
 						@mkdir -p $(@D)
-						$(CC) $(CC_FLAGS) ${HEADER} -MMD -c $< -o $@
+						@$(CC) $(CC_FLAGS) ${HEADER} -MMD -c $< -o $@
 
 
 
 clean	:
-				rm -rf $(OBJS_DIR)
+				@rm -rf $(OBJS_DIR)
 fclean	:	clean
-				rm -rf ${NAME} ${TESTNAME} ${NAME}.ret ${TESTNAME}.ret ${TESTSRCS}
+				@rm -rf ${NAME} ${TESTNAME} ${NAME}.ret ${TESTNAME}.ret ${TESTSRCS}
+			@echo fclean
 re		:	fclean
 				@make all
 
