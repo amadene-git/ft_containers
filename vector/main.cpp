@@ -2,6 +2,15 @@
 #include <vector>
 #include <memory>
 
+//#include <chrono>
+//using namespace std::chrono;
+
+// Use auto keyword to avoid typing long
+// type definitions to get the timepoint
+// at this instant use function now()
+//auto start = high_resolution_clock::now();
+
+
 class A
 {
 	public:
@@ -23,6 +32,19 @@ void    vector_contain(ft::vector<int> &myvector)
 	std::cout << "capacity: " << myvector.capacity() << "\n";
 	std::cout << "max_size: " << myvector.max_size() << "\n\n";    
 }
+/*
+   void    vector_contain(std::vector<int> &myvector)
+   {
+   std::cout << "myvector contains:";
+   for (size_t i = 0; i < myvector.size(); i++)
+   std::cout << ' ' << myvector[i];
+
+   std::cout << '\n';
+   std::cout << "size: " << myvector.size() << "\n";
+   std::cout << "capacity: " << myvector.capacity() << "\n";
+   std::cout << "max_size: " << myvector.max_size() << "\n\n";    
+   }
+ */
 int main()
 {
 	// Vector
@@ -255,34 +277,79 @@ int main()
 			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
 
 		}
-		std::cout << std::endl << "//		BEGIN" << std::endl;
+		std::cout << std::endl << "//		ASSIGN" << std::endl;
 		{
-			ft::vector<int> myvector;
-			for (int i=1; i<=7; i++) myvector.push_back(i);
+			ft::vector<int> first;
+			ft::vector<int> second;
+			//ft::vector<int> third;
 
-			std::cout << "size :" << myvector.size() << std::endl;
-			std::cout << "capacity :" << myvector.capacity() << std::endl;
+			first.assign (7,100);             // 7 ints with a value of 100
+
+			ft::vector<int>::iterator it;
+			it = first.begin() + 1;
+
+			second.assign (it,first.end()-1); // the 5 central values of first
+
+			//			int myints[] = {1776,7,4};
+			//			third.assign (myints,myints+3);   // assigning from array.
+
+			std::cout << "Size of first: " << int (first.size()) << '\n';
+			std::cout << "Size of second: " << int (second.size()) << '\n';
+			//			std::cout << "Size of third: " << int (third.size()) << '\n';
+		}
+		std::cout << std::endl << "//		INSERT" << std::endl;
+		{
+			ft::vector<int> myvector (8,100);
+			ft::vector<int>::iterator it;
+
+			it = myvector.begin();
+			it += 3;
+			it = myvector.insert ( it , 200 );
+
+			myvector.insert (it,42,300);
+
+			// "it" no longer valid, get a new one:
+			it = myvector.begin();
+
+			ft::vector<int> anothervector (2,400);
+			myvector.insert (it+2,anothervector.begin(),anothervector.end());
+
+			//			int myarray [] = { 501,502,503 };
+			//			myvector.insert (myvector.begin(), myarray, myarray+3);
+
 			std::cout << "myvector contains:";
-			for (ft::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+			for (it=myvector.begin(); it<myvector.end(); it++)
 				std::cout << ' ' << *it;
 			std::cout << '\n';
+
+			std::cout << myvector.size() << " " << myvector.capacity() << std::endl;
+
 		}
-		std::cout << std::endl << "//		RANDOM ZONE" << std::endl;
+		std::cout << std::endl << "//		ERASE" << std::endl;
 		{
-			ft::vector<int> vect;
-			for (int i = 0; i < 12; i++)
-				vect.push_back(i);
-			ft::vector<int>::iterator foo = vect.begin() + 2;
-			ft::vector<int>::iterator bar = vect.begin() + 4;
-			std::cout << bar - foo << std::endl;
+			ft::vector<int> myvector;
 
+			// set some values (from 1 to 10)
+			for (int i=1; i<=10; i++) myvector.push_back(i);
+
+			// erase the 6th element
+			myvector.erase (myvector.begin()+5);
+
+			// erase the first 3 elements:
+			myvector.erase (myvector.begin(),myvector.begin()+3);
+
+			std::cout << "myvector contains:";
+			for (unsigned i=0; i<myvector.size(); ++i)
+				std::cout << ' ' << myvector[i];
+			std::cout << '\n';
+			std::cout << myvector.size() << " " << myvector.capacity() << std::endl;
 		}
-
-
-
-
 
 
 
 	}
+	//	auto stop = high_resolution_clock::now();
+	//	auto duration = duration_cast<microseconds>(stop - start);
+	//	std::cout << duration.count() << std::endl;
 }
+

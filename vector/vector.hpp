@@ -1,9 +1,15 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
+//A SUPPRIMER
+// #include <vector>
+// #include <type_traits>
+//
+
 #include <iostream>
 #include <memory>
 #include "iterator.hpp"
+#include "utils.hpp"
 
 namespace ft
 {
@@ -48,7 +54,6 @@ const_reverse_iterator	reverse_iterator<const_iterator>
 		{
 			// std::cout << "Vector Default constructor called ->" << this << std::endl;
 			_alloc = alloc;
-			// _ptr = _alloc.allocate(0);
 			_ptr = NULL;
 			_size = 0;
 			_capacity = 0;
@@ -117,7 +122,7 @@ vector (const vector& x);
 		void	reserve(size_type n)
 		{
 			if (n > _alloc.max_size())
-				throw (std::length_error("vector::reserve"));
+				throw (std::length_error("cannot create ft::vector larger than max_size()"));
 			if (n > _capacity)
 			{
 				pointer		tmp;//alloc new obj
@@ -141,7 +146,7 @@ vector (const vector& x);
 		void resize(size_type n, value_type val = value_type())//if it has to reallocate storage, all iterators, pointers and references related to this container are also invalidated.
 		{
 			if (n > _alloc.max_size())
-					throw (std::length_error("vector::resize"));
+					throw (std::length_error("cannot create ft::vector larger than max_size()"));
 			while (n < _size)
 				_alloc.destroy(_ptr + --_size);
 			
@@ -163,7 +168,7 @@ vector (const vector& x);
 		{
 			this->resize(_size + 1, val);
 		};
-		void	pop_back()
+		void	pop_back(void)
 		{
 			if (_size)
 				_alloc.destroy(_ptr + (--_size));
@@ -187,15 +192,165 @@ vector (const vector& x);
 			x._capacity = tmp_capacity;
 		};
 
+		void	clear(void)
+		{
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(_ptr + i);
+			_size = 0;
+		};
 
-/*assign
-Assign vector content (public member function )
-insert
-Insert elements (public member function )
-erase
-Erase elements (public member function )
-clear
-Clear content (public member function )*/
+		void	assign(size_type n, const value_type& val)
+		{
+			this->clear();
+			this->resize(n, val);
+		};
+		
+		template<typename InputIterator>
+        void assign(InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
+        {
+			if (static_cast<size_type>(last - first) > _alloc.max_size())
+				throw (std::length_error("cannot create ft::vector larger than max_size()"));
+			this->clear();
+			while (first != last)
+				this->push_back(*first++);								
+        };
+
+		iterator	insert(iterator position, const value_type& val)
+		{
+			iterator		it = this->begin();
+			size_type		n = 0;
+			difference_type	k = 0;
+
+			while (it != position)
+			{
+				++it;
+				++n;
+			}				
+
+			if (_capacity == _size)
+				this->reserve(_capacity * 2);
+			k = static_cast<difference_type>(_size);
+			it = this->begin();
+			
+			while (k > static_cast<difference_type>(n))
+			{
+				it[k + 1] = it[k];
+				--k;
+			}
+			it[k] = val;
+			++_size;
+			return (it + k);
+		};
+		void	insert(iterator position, size_type n, const value_type& val)
+		{
+			iterator		it = this->begin();
+			size_type		i = 0;
+			difference_type	k = 0;
+
+			while (it != position)
+			{
+				++it;
+				++i;
+			}				
+
+			if (_size + n > _capacity)
+				this->reserve(_size + n);
+			k = static_cast<difference_type>(_size + n);
+			it = this->begin();
+			while (k > static_cast<difference_type>(i))
+			{
+				it[k] = it[k - static_cast<difference_type>(n)];
+				--k;
+			}
+			_size += n;
+			while (n--)
+				it[k + static_cast<difference_type>(n)] = val;
+		};
+		template <class InputIterator>
+		void insert (iterator position, InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
+		{
+			if (static_cast<size_type>(last - first) > _alloc.max_size())
+				throw (std::length_error("cannot create ft::vector larger than max_size()"));
+
+			difference_type	diff = last - first;	
+			iterator		it = this->begin();
+			difference_type	i = 0;
+			difference_type	k = 0;
+
+			while (it != position)
+			{
+				++it;
+				++i;
+			}				
+
+			while (_size + static_cast<size_type>(diff) > _capacity)
+				this->reserve(_size *2);
+			k = static_cast<difference_type>(_size) + diff;
+			it = this->begin();
+			while (k > i)
+			{
+				it[k] = it[k - diff];
+				--k;
+			}
+
+			_size += static_cast<size_type>(diff);
+			i = -1;
+			while (diff--)
+				it[k + diff] = first[++i];
+		};
+		iterator	erase(iterator position)
+		{
+			iterator		it = this->begin();
+			difference_type	n = 0;
+			difference_type	k = 0;
+
+			while (it != position)
+			{
+				++it;
+				++n;
+			}				
+
+			k = static_cast<difference_type>(_size);
+			it = this->begin();
+
+			while (k > n)
+			{
+				it[n] = it[n + 1];
+				++n;
+			}
+			--_size;
+			_alloc.destroy(_ptr + _size);
+			return (position);	
+		};
+		iterator	erase(iterator first, iterator last)
+		{
+			difference_type	diff = last - first;	
+			iterator		it = this->begin();
+			difference_type	i = 0;
+			difference_type	k = 0;
+
+			while (it != first)
+			{
+				++it;
+				++i;
+			}				
+
+			k = static_cast<difference_type>(_size) - diff;
+			it = this->begin();
+			while (k > i)
+			{
+				it[i] = it[i + diff];
+				++i;
+			}
+			while (i < static_cast<difference_type>(_size))
+				_alloc.destroy(_ptr + i++ - 1);
+			_size -= static_cast<size_type>(diff);
+			return (first);
+		};
+
+
 
 //		ITERATOR
 		iterator 		begin() 		{ return (_ptr); };
@@ -221,7 +376,11 @@ rend
 Return reverse iterator to reverse end (public member function )*/
 
 
-//	private:
+//		ALLOCATOR
+		allocator_type	get_allocator(void) const { return (_alloc); };
+
+
+	private:
 		allocator_type	_alloc;
 		pointer			_ptr;
 		size_type		_size;
