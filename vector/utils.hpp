@@ -2,69 +2,69 @@
 #define UTILS_HPP
 #include <iostream>
 #include <stdio.h>
-//#include <cuchar>
+#include <uchar.h>
 
 namespace ft
 {
-
-
 	template	<bool Cond, class T = void>	struct enable_if {};
-	template	<class T> 					struct enable_if<true, T> 
-											{	
-												typedef T type; 
-											};
+	template	<class T> 					struct enable_if<true, T> {	typedef T type; };
 
-	template <bool b, typename T>
-	struct stock_type 
+	template <class T, T v>
+	struct integral_constant
 	{
-  		typedef	bool		value_type;
-		static	const bool	value = b;
-
+  		static const T					value = v;// == static constexpr T value = v;
+  		typedef T						value_type;
+  		typedef integral_constant<T,v>	type;
+		// constexpr operator T() { return v; }
 	};
 
-	template <class T> struct is_integral : public stock_type<false, T> {};
+	typedef integral_constant<bool,true> true_type;
+	typedef integral_constant<bool,false> false_type;
 
 
-	template <> struct is_integral<bool>						: public stock_type<true, bool> {};
-	template <> struct is_integral<char> 					: public stock_type<true, char> {};
-	// template <> struct is_integral<char16_t> 				: public stock_type<true, char16_t> {};
-	// template <> struct is_integral<char32_t> 				: public stock_type<true, char32_t> {};
-	// template <> struct is_integral<wchar_t> 					: public stock_type<true, wchar_t> {};
-	template <> struct is_integral<signed char> 				: public stock_type<true, signed char> {};
-	template <> struct is_integral<short int> 				: public stock_type<true, short int> {};
-	template <> struct is_integral<int> 						: public stock_type<true, int> {};
-	template <> struct is_integral<long int> 				: public stock_type<true, long int> {};
-//	template <> struct is_integral<long long int> 			: public stock_type<true, long long int> {};
-	template <> struct is_integral<unsigned char> 			: public stock_type<true, unsigned char> {};
-	template <> struct is_integral<unsigned short int> 		: public stock_type<true, unsigned short int> {};
-	template <> struct is_integral<unsigned int> 			: public stock_type<true, unsigned int> {};
-	template <> struct is_integral<unsigned long int> 		: public stock_type<true, unsigned long int> {};
-//	template <> struct is_integral<unsigned long long int>	: public stock_type<true, unsigned long long int> {};
+	template <class T> struct is_integral				: false_type {};
 
 // bool
+	template <> struct is_integral<bool>				: true_type {};	
 // char
-// char16_t
-// char32_t
-// wchar_t
+	template <> struct is_integral<char> 				: true_type {};	
 // signed char
+	template <> struct is_integral<signed char> 		: true_type {};	 
+
+// char16_t ?
+// char32_t ?
+
+// wchar_t
+	template <> struct is_integral<wchar_t>				: true_type {};	
+
 // short int
+	template <> struct is_integral<short int> 			: true_type {};	 
 // int
+	template <> struct is_integral<int> 				: true_type {};	
 // long int
-// long long int
+	template <> struct is_integral<long int> 			: true_type {};	 
+
+// long long int ?
+
 // unsigned char
+	template <> struct is_integral<unsigned char> 		: true_type {};	 
 // unsigned short int
+	template <> struct is_integral<unsigned short int> 	: true_type {};	
 // unsigned int
+	template <> struct is_integral<unsigned int> 		: true_type {};	
 // unsigned long int
-// unsigned long long int
+	template <> struct is_integral<unsigned long int> 	: true_type {};	
+
+// unsigned long long int ?
 
 
 
 
 /*				
 ** enable_if, **
+**is_integral**,
 iterator_traits, 
 reverse_iterator,
-is_integral,
 equal,
 lexicographical compare,
 std::pair,

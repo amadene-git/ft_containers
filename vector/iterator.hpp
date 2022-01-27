@@ -1,127 +1,198 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
+
 namespace ft 
 {
-
 	struct input_iterator_tag { };
-
 	struct output_iterator_tag { };
-
 	struct forward_iterator_tag : public input_iterator_tag { };
-
 	struct bidirectional_iterator_tag : public forward_iterator_tag { };
-
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
-
-
-	template <	class Category,              // iterator::iterator_category
-			 class T,                     // iterator::value_type
-			 class Distance = __gnu_cxx::ptrdiff_t,  // iterator::difference_type
-			 class Pointer = T*,          // iterator::pointer
-			 class Reference = T& >         // iterator::reference
-				 class iterator
-				 {
-					 public :
-						 typedef T         value_type;
-						 typedef Distance  difference_type;
-						 typedef Pointer   pointer;
-						 typedef Reference reference;
-						 typedef Category  iterator_category;
-				 };
-
-	template <class T>
-		class random_access_iterator : public ft::iterator<random_access_iterator_tag, T>
+	template <	class Category, class T, class Distance = __gnu_cxx::ptrdiff_t, 
+				class Pointer = T*, class Reference = T& >
+	class iterator
 	{
+	public :
+		typedef T         value_type;
+		typedef Distance  difference_type;
+		typedef Pointer   pointer;
+		typedef Reference reference;
+		typedef Category  iterator_category;
+	};
+
+	template <class Iterator>
+	class iterator_traits
+	{
+		typedef typename	Iterator::difference_type	difference_type;
+		typedef typename	Iterator::value_type 		value_type;
+		typedef typename	Iterator::pointer 			pointer;
+		typedef typename	Iterator::reference 		reference;
+		typedef typename	Iterator::iterator_category iterator_category;
+	};
+	template <class T> 
+	class iterator_traits<T*>
+	{
+		typedef 			__gnu_cxx::ptrdiff_t					difference_type;
+		typedef 			T							value_type;
+		typedef 			T*							pointer;
+		typedef 			T&							reference;
+		typedef 			random_access_iterator_tag	iterator_category;
+	};
+	template <class T> 
+	class iterator_traits<const T*>
+	{
+		typedef 			__gnu_cxx::ptrdiff_t		difference_type;
+		typedef 			T							value_type;
+		typedef 			const T*					pointer;
+		typedef 			const T&					reference;
+		typedef 			random_access_iterator_tag	iterator_category;
+	};
+
+
+
+	template <class Iterator>
+	class reverse_iterator
+	{
+		private	:
+		Iterator	_base;
+		
 		public :
-			typedef	T&	reference;
-			typedef	T*	pointer;
 
-			typedef	typename	ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
-			typedef	typename	ft::iterator<random_access_iterator_tag, T>::value_type			value_type;
-			typedef	typename	ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
+			typedef 			Iterator										iterator_type;	
 
-			random_access_iterator(void) { _ptr = NULL; };
-			random_access_iterator(pointer	src) { _ptr = src; };
-			random_access_iterator(random_access_iterator const &src) { *this = src; };
-			virtual ~random_access_iterator(void) {};
-			
-			//CLASSIC OVERLOAD
-			random_access_iterator 	&operator=(random_access_iterator const &rhs)
+			typedef typename	ft::iterator_traits<Iterator>::iterator_category	iterator_category;
+			typedef typename 	ft::iterator_traits<Iterator>::value_type			value_type;
+			typedef typename	ft::iterator_traits<Iterator>::difference_type		difference_type;
+			typedef typename	ft::iterator_traits<Iterator>::pointer				pointer;
+			typedef typename	ft::iterator_traits<Iterator>::reference			reference;
+
+
+			reverse_iterator(void){};
+			explicit reverse_iterator(iterator_type it)
 			{
-				this->_ptr = rhs._ptr;
-				return (*this);
-			}
+				_base = it;
+			};
 
-			reference				operator[](difference_type n)
+			template <class Iter>
+  			reverse_iterator (const reverse_iterator<Iter>& rev_it)
 			{
-				return (*(_ptr + n));
-			}
+				_base = rev_it;
+			};
+
+			virtual ~reverse_iterator(void) {};
+
+			iterator_type	base(void) const
+			{
+				return (_base);
+			};
 
 			//OVERLOAD POINTER
-			reference	operator*(void) const { return (*_ptr); }
+			reference	operator*(void)		const { return (*_base); }
+			pointer		operator->(void)	const { return &(operator*()); }
 
-			//OVERLOAD COMPARISON
-			bool	operator>(random_access_iterator const &rhs)	const	{ return (_ptr >  rhs._ptr); };
-			bool	operator>=(random_access_iterator const &rhs)	const	{ return (_ptr >= rhs._ptr); };
-			bool	operator<(random_access_iterator const &rhs)	const	{ return (_ptr <  rhs._ptr); };
-			bool	operator<=(random_access_iterator const &rhs) 	const	{ return (_ptr <= rhs._ptr); };
-			bool	operator==(random_access_iterator const &rhs) 	const	{ return (_ptr == rhs._ptr); };
-			bool	operator!=(random_access_iterator const &rhs) 	const	{ return (_ptr != rhs._ptr); };
 	
+
+			//OVERLOAD ARITHMETIC
+			reverse_iterator	operator+(difference_type n) const	{ return (_base - n); };
+			reverse_iterator	operator-(difference_type n) const	{ return (_base + n); };
+
 			//INCREMENT & DECREMENT
-			random_access_iterator	&operator++()
+			reverse_iterator	&operator++()
 			{
-				_ptr++;
+				_base--;
 				return (*this);
 			};
-			random_access_iterator	operator++(int)
+			reverse_iterator	operator++(int)
 			{
-				random_access_iterator	temp = *this;
-				++_ptr;
+				reverse_iterator	temp = *this;
+				++(*this);
 				return (temp);
 			};
 
-			random_access_iterator	&operator--()
+			reverse_iterator	&operator--()
 			{
-				_ptr--;
+				_base++;
 				return (*this);
 			};
-			random_access_iterator	operator--(int)
+			reverse_iterator	operator--(int)
 			{
-				random_access_iterator	temp = *this;
-				--_ptr;
+				reverse_iterator	temp = *this;
+				--(*this);
 				return (temp);
 			};		
 
-			random_access_iterator	&operator+=(difference_type n)
+			reverse_iterator	&operator+=(difference_type n)
 			{ 
-				_ptr += n;
+				_base -= n;
 				return (*this);
 			};
-			random_access_iterator	&operator-=(difference_type n)
+			reverse_iterator	&operator-=(difference_type n)
 			{ 
-				_ptr -= n;
+				_base += n;
 				return (*this);
 			};
-			
-			//OVERLOAD ARITHMETIC
-			random_access_iterator	operator+(difference_type n) const	{ return (_ptr + n); };
-			random_access_iterator	operator-(difference_type n) const	{ return (_ptr - n); };
-			
-			difference_type		operator-(random_access_iterator rhs)	const	
-			{ return (_ptr - rhs._ptr); };
 
+			//CLASSIC OVERLOAD
+			// reverse_iterator 	&operator=(reverse_iterator const &rhs)
+			// {
+			// 	this->_base = rhs._base;
+			// 	return (*this);
+			// }
+
+			reference	operator[](difference_type n) { return (this->base()[-n -1]); }	
+			
 			//OVERLOAD CONST
-			operator random_access_iterator<const T> () const { return (random_access_iterator<const T>(this->_elem)); }
-		
-		private :
-			pointer	_ptr;
+			operator reverse_iterator<const Iterator> () const { return (reverse_iterator<const Iterator>(*this)); };
+
 	};
+	//OVERLOAD + -
+	template <class Iterator>
+	reverse_iterator<Iterator> operator+(	typename reverse_iterator<Iterator>::difference_type n,
+											const reverse_iterator<Iterator>& rev_it)
+	{
+		return (rev_it + n);
+	}
+	
+	template <class Iterator>
+	typename reverse_iterator<Iterator>::difference_type operator-(	const reverse_iterator<Iterator>& lhs, 
+																	const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs.base() - rhs.base());
+	}
+	
+	//RELATIONAL OPERATORS
+	template <class Iterator> 
+	bool operator==(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs == rhs);
+	}	
+	template <class Iterator> 
+	bool	operator!=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs != rhs);
+	}	
+	template <class Iterator> 
+	bool	operator<(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs > rhs);
+	}
+	template <class Iterator> 
+	bool	operator<=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs >= rhs);
+	}
+	template <class Iterator> 
+	bool	operator>(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs < rhs);
+	}
+	template <class Iterator> 
+	bool	operator>=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{
+		return (lhs <= rhs);
+	}
 
-//	OVERLOAD  n + it
-template <typename T>
-	random_access_iterator<T> operator+(int i, const random_access_iterator<T> &rhs) { return (rhs + i); }
+
 }
-
 #endif
