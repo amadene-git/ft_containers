@@ -6,10 +6,10 @@
 namespace ft
 {
 
-template <class T>
+	template <class T>
 	class Vector_Iterator : public ft::iterator<random_access_iterator_tag, T>
 	{
-		public :
+	public :
 			typedef	T&	reference;
 			typedef	T*	pointer;
 

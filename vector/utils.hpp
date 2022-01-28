@@ -15,7 +15,7 @@ namespace ft
   		static const T					value = v;// == static constexpr T value = v;
   		typedef T						value_type;
   		typedef integral_constant<T,v>	type;
-		// constexpr operator T() { return v; }
+		operator T() { return v; }// constexpr operator T() { return v; }
 	};
 
 	typedef integral_constant<bool,true> true_type;
@@ -23,7 +23,6 @@ namespace ft
 
 
 	template <class T> struct is_integral				: false_type {};
-
 // bool
 	template <> struct is_integral<bool>				: true_type {};	
 // char
@@ -35,8 +34,7 @@ namespace ft
 // char32_t ?
 
 // wchar_t
-	template <> struct is_integral<wchar_t>				: true_type {};	
-
+	template <> struct is_integral<wchar_t>				: true_type {};
 // short int
 	template <> struct is_integral<short int> 			: true_type {};	 
 // int
@@ -58,15 +56,74 @@ namespace ft
 // unsigned long long int ?
 
 
+template <class InputIterator1, class InputIterator2>
+bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+{
+	while (first1 != last1)
+	{
+    	if (!(*first1 == *first2))
+      		return false;
+    	++first1; ++first2;
+  	}
+	return true;
+}
+template <class InputIterator1, class InputIterator2, class BinaryPredicate>
+bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
+{
+	while (first1 != last1)
+	{
+	    if (!pred(*first1, *first2))
+      		return false;
+    	++first1; ++first2;
+  	}
+	return true;
+}
+
+template <class InputIterator1, class InputIterator2>
+bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+								InputIterator2 first2, InputIterator2 last2)
+{
+	while (first1 != last1)
+	{
+		if (first2 == last2 || *first2 < *first1) 
+			return (false);
+		else if (*first1 < *first2) 
+			return (true);
+		
+		++first1;
+		++first2;
+	}
+	return (first2 != last2);
+}
+
+template <class InputIterator1, class InputIterator2, class Compare>
+bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+                                InputIterator2 first2, InputIterator2 last2,
+                                Compare comp)
+{
+	while (first1 != last1)
+	{
+		if (first2 == last2 || comp(*first2, *first1)) 
+			return (false);
+		else if (comp(*first1, *first2)) 
+			return (true);
+		
+		++first1;
+		++first2;
+	}
+	return (first2 != last2);
+}
+
+
 
 
 /*				
+**iterator_traits**, 
+**reverse_iterator**,
 ** enable_if, **
 **is_integral**,
-iterator_traits, 
-reverse_iterator,
-equal,
-lexicographical compare,
+**equal**,
+**lexicographical compare,**
 std::pair,
 std::make_pair,
 */
