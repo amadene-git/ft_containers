@@ -6,6 +6,16 @@
 
 namespace ft
 {
+
+/*
+**iterator_traits**, 
+**reverse_iterator**,
+** enable_if, **
+**is_integral**,
+**equal**,
+**lexicographical compare,**
+*/
+
 	template	<bool Cond, class T = void>	struct enable_if {};
 	template	<class T> 					struct enable_if<true, T> {	typedef T type; };
 
@@ -56,77 +66,107 @@ namespace ft
 // unsigned long long int ?
 
 
-template <class InputIterator1, class InputIterator2>
-bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
-{
-	while (first1 != last1)
+	template <class InputIterator1, class InputIterator2>
+	bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
 	{
-    	if (!(*first1 == *first2))
-      		return false;
-    	++first1; ++first2;
-  	}
-	return true;
-}
-template <class InputIterator1, class InputIterator2, class BinaryPredicate>
-bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
-{
-	while (first1 != last1)
-	{
-	    if (!pred(*first1, *first2))
-      		return false;
-    	++first1; ++first2;
-  	}
-	return true;
-}
-
-template <class InputIterator1, class InputIterator2>
-bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
-								InputIterator2 first2, InputIterator2 last2)
-{
-	while (first1 != last1)
-	{
-		if (first2 == last2 || *first2 < *first1) 
-			return (false);
-		else if (*first1 < *first2) 
-			return (true);
-		
-		++first1;
-		++first2;
+		while (first1 != last1)
+		{
+	    	if (!(*first1 == *first2))
+	      		return false;
+	    	++first1; ++first2;
+	  	}
+		return true;
 	}
-	return (first2 != last2);
-}
-
-template <class InputIterator1, class InputIterator2, class Compare>
-bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
-                                InputIterator2 first2, InputIterator2 last2,
-                                Compare comp)
-{
-	while (first1 != last1)
+	template <class InputIterator1, class InputIterator2, class BinaryPredicate>
+	bool	equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
 	{
-		if (first2 == last2 || comp(*first2, *first1)) 
-			return (false);
-		else if (comp(*first1, *first2)) 
-			return (true);
-		
-		++first1;
-		++first2;
+		while (first1 != last1)
+		{
+		    if (!pred(*first1, *first2))
+	      		return false;
+	    	++first1; ++first2;
+	  	}
+		return true;
 	}
-	return (first2 != last2);
-}
+
+	template <class InputIterator1, class InputIterator2>
+	bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+									InputIterator2 first2, InputIterator2 last2)
+	{
+		while (first1 != last1)
+		{
+			if (first2 == last2 || *first2 < *first1) 
+				return (false);
+			else if (*first1 < *first2) 
+				return (true);
+
+			++first1;
+			++first2;
+		}
+		return (first2 != last2);
+	}
+
+	template <class InputIterator1, class InputIterator2, class Compare>
+	bool	lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+	                                InputIterator2 first2, InputIterator2 last2,
+	                                Compare comp)
+	{
+		while (first1 != last1)
+		{
+			if (first2 == last2 || comp(*first2, *first1)) 
+				return (false);
+			else if (comp(*first1, *first2)) 
+				return (true);
+
+			++first1;
+			++first2;
+		}
+		return (first2 != last2);
+	}
 
 
 
 
 /*				
-**iterator_traits**, 
-**reverse_iterator**,
-** enable_if, **
-**is_integral**,
-**equal**,
-**lexicographical compare,**
 std::pair,
 std::make_pair,
+**binary function**
+**less**
 */
+
+
+
+	template <class Arg1, class Arg2, class Result>
+	struct	binary_function 
+	{
+		typedef Arg1 first_argument_type;
+		typedef Arg2 second_argument_type;
+		typedef Result result_type;
+	};
+
+	template <class T>
+	struct less : binary_function<T, T, bool> 
+	{
+		bool operator()(const T& x, const T& y) const 
+		{
+			return (x < y);
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 #endif

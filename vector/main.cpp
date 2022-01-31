@@ -25,42 +25,42 @@ void	vector_contain(ft::vector<int> &vec)
 
 void    vector_test(void)
 {
-    // Vector
+	// Vector
 	std::cout << std::endl << "//VECTOR";
-    {
+	{
 		std::cout << std::endl << std::endl << "//		CONSTRUCTOR" << std::endl;
-        {
-            // constructors used in the same order as described above:
-            ft::vector<int> first;                                // empty vector of ints
-            ft::vector<int> second (4,100);                       // four ints with value 100
-            ft::vector<int> third (second.begin(),second.end());  // iterating through second
-            ft::vector<int> fourth (third);                       // a copy of third
-            
-            // the iterator constructor can also be used to construct from arrays:
-            int myints[] = {16,2,77,29};
-            ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
-            
-            std::cout << "The contents of fifth are:";
-            for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
-              std::cout << ' ' << *it;
-            std::cout << '\n';
-        }
+		{
+			// constructors used in the same order as described above:
+			ft::vector<int> first;                                // empty vector of ints
+			ft::vector<int> second (4,100);                       // four ints with value 100
+			ft::vector<int> third (second.begin(),second.end());  // iterating through second
+			ft::vector<int> fourth (third);                       // a copy of third
+
+			// the iterator constructor can also be used to construct from arrays:
+			int myints[] = {16,2,77,29};
+			ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
+
+			std::cout << "The contents of fifth are:";
+			for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
+				std::cout << ' ' << *it;
+			std::cout << '\n';
+		}
 		std::cout << std::endl << "//		OPERATOR =" << std::endl;
 		{
 			ft::vector<int> foo (3,0);
-  			ft::vector<int> bar (5,0);
+			ft::vector<int> bar (5,0);
 
-  			bar = foo;
-  			foo = ft::vector<int>();
+			bar = foo;
+			foo = ft::vector<int>();
 
-  			std::cout << "Size of foo: " << int(foo.size()) << '\n';
-  			std::cout << "Size of bar: " << int(bar.size()) << '\n';
+			std::cout << "Size of foo: " << int(foo.size()) << '\n';
+			std::cout << "Size of bar: " << int(bar.size()) << '\n';
 		}		
 	}
 
 
-    std::cout << std::endl << std::endl << "//	ITERATOR";
-    {
+	std::cout << std::endl << std::endl << "//	ITERATOR";
+	{
 		std::cout << std::endl << "//		BEGIN END" << std::endl;
 		{
 			ft::vector<int> myvector;
@@ -75,7 +75,7 @@ void    vector_test(void)
 		{
 			ft::vector<int> myvector (5);  // 5 default-constructed ints
 			int i = 0;
-			
+
 			ft::vector<int>::reverse_iterator rit = myvector.rbegin();
 			for (; rit!= myvector.rend(); ++rit)
 			{
@@ -185,9 +185,9 @@ void    vector_test(void)
 			}
 		}
 	}
-    
-    
-    std::cout << std::endl << std::endl << "//	ACCES";
+
+
+	std::cout << std::endl << std::endl << "//	ACCES";
 	{
 		std::cout << std::endl << "//		AT" << std::endl;
 		{
@@ -319,7 +319,7 @@ void    vector_test(void)
 			ft::vector<int>::iterator it;
 			it = first.begin() + 1;
 
-		//	second.assign (it,first.end()-1); // the 5 central values of first
+			//	second.assign (it,first.end()-1); // the 5 central values of first
 
 			//			int myints[] = {1776,7,4};
 			//			third.assign (myints,myints+3);   // assigning from array.
@@ -336,8 +336,8 @@ void    vector_test(void)
 			it = myvector.begin();
 			it += 3;
 			it = myvector.insert ( it , 200 );
-		
-			
+
+
 			myvector.insert (it,42,300);
 
 			// "it" no longer valid, get a new one:
@@ -398,8 +398,8 @@ void    vector_test(void)
 			std::cout << '\n';
 		}
 	}
-	
-	
+
+
 	std::cout << std::endl << std::endl << "//	ALLOCATOR" << std::endl;
 	{
 		ft::vector<int> myvector;
@@ -445,17 +445,19 @@ void    vector_test(void)
 
 		std::cout << "foo contains:";
 		for (ft::vector<int>::iterator it = foo.begin(); it!=foo.end(); ++it)
-		  std::cout << ' ' << *it;
+			std::cout << ' ' << *it;
 		std::cout << '\n';
 
 		std::cout << "bar contains:";
 		for (ft::vector<int>::iterator it = bar.begin(); it!=bar.end(); ++it)
-		  std::cout << ' ' << *it;
+			std::cout << ' ' << *it;
 		std::cout << '\n';
 	}
 
 }
 
+
+/*
 //-std=c++11
 #include <type_traits>//enable_if is_integral
 
@@ -463,11 +465,26 @@ void    vector_test(void)
 // 1. the return type (bool) is only valid if T is an integral type:
 template <class T>
 typename ft::enable_if<ft::is_integral<T>::value,bool>::type
-  is_odd (T i) {return bool(i%2);}
+is_odd (T i) {return bool(i%2);}
 // 2. the second template argument is only valid if T is an integral type:
 template < class T,
-           class = typename ft::enable_if<ft::is_integral<T>::value>::type>
-bool is_even (T i) {return !bool(i%2);}
+		 class = typename ft::enable_if<ft::is_integral<T>::value>::type>
+		 bool is_even (T i) {return !bool(i%2);}
+
+
+
+#include <algorithm>//equal lexicographical_compare
+		 bool mypredicate (int i, int j) {
+			 return (i==j);
+		 }
+
+#include <cctype>       // std::tolower
+
+// a case-insensitive comparison function:
+bool mycomp (char c1, char c2)
+{ return std::tolower(c1)<std::tolower(c2); }
+
+
 
 void	utils_test()
 {
@@ -487,18 +504,18 @@ void	utils_test()
 		std::cout << std::endl << "//	REVERSE_ITERATOR" << std::endl;
 		{
 			ft::vector<int> myvector;
-			
+
 			for (int i=0; i<10; i++)
 				myvector.push_back(i);
 
 			typedef ft::vector<int>::iterator iter_type;
-			                                                       // ? 0 1 2 3 4 5 6 7 8 9 ?
+			// ? 0 1 2 3 4 5 6 7 8 9 ?
 			iter_type from (myvector.begin());                     //   ^
-			                                                       //         ------>
+			//         ------>
 			iter_type until (myvector.end());                      //                       ^
-			                                                       //
+			//
 			ft::reverse_iterator<iter_type> rev_until (from);     // ^
-			                                                       //         <------
+			//         <------
 			ft::reverse_iterator<iter_type> rev_from (until);     //                     ^
 
 			std::cout << "myvector:";
@@ -526,9 +543,78 @@ void	utils_test()
 			std::cout << "int: " << ft::is_integral<int>::value << std::endl;
 			std::cout << "float: " << ft::is_integral<float>::value << std::endl;
 			std::cout << "iterator: " << ft::is_integral<ft::vector<int>::iterator>::value << std::endl;
-			
+
 		}
+		std::cout << std::endl << "//	EQUAL" << std::endl;
+		{
+			int myints[] = {20,40,60,80,100};               //   myints: 20 40 60 80 100
+			ft::vector<int>myvector (myints,myints+5);     // myvector: 20 40 60 80 100
+
+			// using default comparison:
+			if ( ft::equal (myvector.begin(), myvector.end(), myints) )
+				std::cout << "The contents of both sequences are equal.\n";
+			else
+				std::cout << "The contents of both sequences differ.\n";
+
+			myvector[3]=81;                                 // myvector: 20 40 60 81 100
+
+			// using predicate comparison:
+			if ( ft::equal (myvector.begin(), myvector.end(), myints, mypredicate) )
+				std::cout << "The contents of both sequences are equal.\n";
+			else
+				std::cout << "The contents of both sequences differ.\n";
+
+		}
+		std::cout << std::endl << "//	LEXICOGRAPHICAL COMPARE" << std::endl;
+		{
+			char foo[]="Apple";
+			char bar[]="apartment";
+
+			std::cout << std::boolalpha;
+
+			std::cout << "Comparing foo and bar lexicographically (foo<bar):\n";
+
+			std::cout << "Using default comparison (operator<): ";
+			std::cout << ft::lexicographical_compare(foo,foo+5,bar,bar+9);
+			std::cout << '\n';
+
+			std::cout << "Using mycomp as comparison object: ";
+			std::cout << ft::lexicographical_compare(foo,foo+5,bar,bar+9,mycomp);
+			std::cout << '\n';
+
+
+		}
+
 	}
+
+}
+*/
+
+
+#include "map.hpp"
+#include <map>
+#include <string>
+
+
+void	map_test()
+{
+	std::map<std::string, int> mymap;
+
+	mymap["salut"] = 97;
+	mymap["salut"] = 92;
+
+
+
+
+	std::cout << mymap["salut"] << std::endl;
+
+	mymap["salut "]++;
+
+	std::cout << mymap["salut"] << std::endl;
+
+
+
+
 
 }
 
@@ -536,15 +622,19 @@ void	utils_test()
 
 int main()
 {
-	// Vector
-	vector_test();
 
-	utils_test();
-		
+//	vector_test();
 
-		//auto stop = high_resolution_clock::now();
-		//auto duration = duration_cast<microseconds>(stop - start);
-		//std::cout << duration.count() << std::endl;
+//	utils_test();
+
+	 map_test();
+
+
+
+
+//	auto stop = high_resolution_clock::now();
+//	auto duration = duration_cast<microseconds>(stop - start);
+//	std::cout << duration.count() << std::endl;
 
 	return (0);
 }

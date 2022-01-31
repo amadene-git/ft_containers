@@ -37,7 +37,7 @@ namespace ft
 	class iterator_traits<T*>
 	{
 	public :
-		typedef 			__gnu_cxx::ptrdiff_t					difference_type;
+		typedef 			__gnu_cxx::ptrdiff_t		difference_type;
 		typedef 			T							value_type;
 		typedef 			T*							pointer;
 		typedef 			T&							reference;
