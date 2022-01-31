@@ -468,15 +468,15 @@ typename ft::enable_if<ft::is_integral<T>::value,bool>::type
 is_odd (T i) {return bool(i%2);}
 // 2. the second template argument is only valid if T is an integral type:
 template < class T,
-		 class = typename ft::enable_if<ft::is_integral<T>::value>::type>
-		 bool is_even (T i) {return !bool(i%2);}
+class = typename ft::enable_if<ft::is_integral<T>::value>::type>
+bool is_even (T i) {return !bool(i%2);}
 
 
 
 #include <algorithm>//equal lexicographical_compare
-		 bool mypredicate (int i, int j) {
-			 return (i==j);
-		 }
+bool mypredicate (int i, int j) {
+return (i==j);
+}
 
 #include <cctype>       // std::tolower
 
@@ -488,104 +488,104 @@ bool mycomp (char c1, char c2)
 
 void	utils_test()
 {
-	//UTILS
-	std::cout << std::endl << std::endl << std::endl << "//UTILS";
-	{
-		std::cout << std::endl << "//	ITERATOR_TRAITS" << std::endl;
-		{
-			typedef ft::iterator_traits<int*> traits;
-			if (typeid(traits::iterator_category)==typeid(ft::random_access_iterator_tag))
-				std::cout << "int* is a random-access iterator\n";
+//UTILS
+std::cout << std::endl << std::endl << std::endl << "//UTILS";
+{
+std::cout << std::endl << "//	ITERATOR_TRAITS" << std::endl;
+{
+typedef ft::iterator_traits<int*> traits;
+if (typeid(traits::iterator_category)==typeid(ft::random_access_iterator_tag))
+std::cout << "int* is a random-access iterator\n";
 
-			typedef ft::iterator_traits<ft::vector<int>::iterator> vectraits;
-			if (typeid(vectraits::iterator_category)==typeid(ft::random_access_iterator_tag))
-				std::cout << "vector<int> is a random-access iterator\n";
-		}
-		std::cout << std::endl << "//	REVERSE_ITERATOR" << std::endl;
-		{
-			ft::vector<int> myvector;
+typedef ft::iterator_traits<ft::vector<int>::iterator> vectraits;
+if (typeid(vectraits::iterator_category)==typeid(ft::random_access_iterator_tag))
+std::cout << "vector<int> is a random-access iterator\n";
+}
+std::cout << std::endl << "//	REVERSE_ITERATOR" << std::endl;
+{
+ft::vector<int> myvector;
 
-			for (int i=0; i<10; i++)
-				myvector.push_back(i);
+for (int i=0; i<10; i++)
+myvector.push_back(i);
 
-			typedef ft::vector<int>::iterator iter_type;
-			// ? 0 1 2 3 4 5 6 7 8 9 ?
-			iter_type from (myvector.begin());                     //   ^
-			//         ------>
-			iter_type until (myvector.end());                      //                       ^
-			//
-			ft::reverse_iterator<iter_type> rev_until (from);     // ^
-			//         <------
-			ft::reverse_iterator<iter_type> rev_from (until);     //                     ^
+typedef ft::vector<int>::iterator iter_type;
+// ? 0 1 2 3 4 5 6 7 8 9 ?
+iter_type from (myvector.begin());                     //   ^
+//         ------>
+iter_type until (myvector.end());                      //                       ^
+//
+ft::reverse_iterator<iter_type> rev_until (from);     // ^
+//         <------
+ft::reverse_iterator<iter_type> rev_from (until);     //                     ^
 
-			std::cout << "myvector:";
-			while (rev_from != rev_until)
-				std::cout << ' ' << *rev_from++;
-			std::cout << '\n';
-		}
-		std::cout << std::endl << "//	ENABLE_IF" << std::endl;
-		{
-
-
-			short int i = 1;    // code does not compile if type of i is not integral
-
-			std::cout << std::boolalpha;
-			std::cout << "i is odd: " << is_odd(i) << std::endl;
-			std::cout << "i is even: " << is_even(i) << std::endl;
+std::cout << "myvector:";
+while (rev_from != rev_until)
+std::cout << ' ' << *rev_from++;
+std::cout << '\n';
+}
+std::cout << std::endl << "//	ENABLE_IF" << std::endl;
+{
 
 
-		}
-		std::cout << std::endl << "//	IS_INTEGRAL" << std::endl;
-		{
-			std::cout << std::boolalpha;
-			std::cout << "is_integral:" << std::endl;
-			std::cout << "char: " << ft::is_integral<char>::value << std::endl;
-			std::cout << "int: " << ft::is_integral<int>::value << std::endl;
-			std::cout << "float: " << ft::is_integral<float>::value << std::endl;
-			std::cout << "iterator: " << ft::is_integral<ft::vector<int>::iterator>::value << std::endl;
+short int i = 1;    // code does not compile if type of i is not integral
 
-		}
-		std::cout << std::endl << "//	EQUAL" << std::endl;
-		{
-			int myints[] = {20,40,60,80,100};               //   myints: 20 40 60 80 100
-			ft::vector<int>myvector (myints,myints+5);     // myvector: 20 40 60 80 100
-
-			// using default comparison:
-			if ( ft::equal (myvector.begin(), myvector.end(), myints) )
-				std::cout << "The contents of both sequences are equal.\n";
-			else
-				std::cout << "The contents of both sequences differ.\n";
-
-			myvector[3]=81;                                 // myvector: 20 40 60 81 100
-
-			// using predicate comparison:
-			if ( ft::equal (myvector.begin(), myvector.end(), myints, mypredicate) )
-				std::cout << "The contents of both sequences are equal.\n";
-			else
-				std::cout << "The contents of both sequences differ.\n";
-
-		}
-		std::cout << std::endl << "//	LEXICOGRAPHICAL COMPARE" << std::endl;
-		{
-			char foo[]="Apple";
-			char bar[]="apartment";
-
-			std::cout << std::boolalpha;
-
-			std::cout << "Comparing foo and bar lexicographically (foo<bar):\n";
-
-			std::cout << "Using default comparison (operator<): ";
-			std::cout << ft::lexicographical_compare(foo,foo+5,bar,bar+9);
-			std::cout << '\n';
-
-			std::cout << "Using mycomp as comparison object: ";
-			std::cout << ft::lexicographical_compare(foo,foo+5,bar,bar+9,mycomp);
-			std::cout << '\n';
+std::cout << std::boolalpha;
+std::cout << "i is odd: " << is_odd(i) << std::endl;
+std::cout << "i is even: " << is_even(i) << std::endl;
 
 
-		}
+}
+std::cout << std::endl << "//	IS_INTEGRAL" << std::endl;
+{
+	std::cout << std::boolalpha;
+	std::cout << "is_integral:" << std::endl;
+	std::cout << "char: " << ft::is_integral<char>::value << std::endl;
+	std::cout << "int: " << ft::is_integral<int>::value << std::endl;
+	std::cout << "float: " << ft::is_integral<float>::value << std::endl;
+	std::cout << "iterator: " << ft::is_integral<ft::vector<int>::iterator>::value << std::endl;
 
-	}
+}
+std::cout << std::endl << "//	EQUAL" << std::endl;
+{
+	int myints[] = {20,40,60,80,100};               //   myints: 20 40 60 80 100
+	ft::vector<int>myvector (myints,myints+5);     // myvector: 20 40 60 80 100
+
+	// using default comparison:
+	if ( ft::equal (myvector.begin(), myvector.end(), myints) )
+		std::cout << "The contents of both sequences are equal.\n";
+	else
+		std::cout << "The contents of both sequences differ.\n";
+
+	myvector[3]=81;                                 // myvector: 20 40 60 81 100
+
+	// using predicate comparison:
+	if ( ft::equal (myvector.begin(), myvector.end(), myints, mypredicate) )
+		std::cout << "The contents of both sequences are equal.\n";
+	else
+		std::cout << "The contents of both sequences differ.\n";
+
+}
+std::cout << std::endl << "//	LEXICOGRAPHICAL COMPARE" << std::endl;
+{
+	char foo[]="Apple";
+	char bar[]="apartment";
+
+	std::cout << std::boolalpha;
+
+	std::cout << "Comparing foo and bar lexicographically (foo<bar):\n";
+
+	std::cout << "Using default comparison (operator<): ";
+	std::cout << ft::lexicographical_compare(foo,foo+5,bar,bar+9);
+	std::cout << '\n';
+
+	std::cout << "Using mycomp as comparison object: ";
+	std::cout << ft::lexicographical_compare(foo,foo+5,bar,bar+9,mycomp);
+	std::cout << '\n';
+
+
+}
+
+}
 
 }
 */
@@ -598,20 +598,80 @@ void	utils_test()
 
 void	map_test()
 {
-	std::map<std::string, int> mymap;
-
-	mymap["salut"] = 97;
-	mymap["salut"] = 92;
+	ft::map<std::string, int> mymap;
 
 
 
+	std::cout << "//" <<			"MAP" << std::endl;
+	/*	std::cout << "//\t" <<			"CONSTRUCTOR" << std::endl;
+		{
+		bool fncomp (char lhs, char rhs) {return lhs<rhs;}
 
-	std::cout << mymap["salut"] << std::endl;
+		struct classcomp {
+		bool operator() (const char& lhs, const char& rhs) const
+		{return lhs<rhs;}
+		};
 
-	mymap["salut "]++;
+		std::map<char,int> first;
 
-	std::cout << mymap["salut"] << std::endl;
+		first['a']=10;
+		first['b']=30;
+		first['c']=50;
+		first['d']=70;
 
+		std::map<char,int> second (first.begin(),first.end());
+
+		std::map<char,int> third (second);
+
+		std::map<char,int,classcomp> fourth;                 // class as Compare
+
+		bool(*fn_pt)(char,char) = fncomp;
+		std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
+		}
+
+		std::cout << "//\t" <<			"OBSERVERS" << std::endl;
+		{
+		std::cout << "//\t\t" <<	"VALUE_COMP" << std::endl;
+		{
+		std::map<char,int> mymap;
+
+		mymap['x']=1001;
+		mymap['y']=2002;
+		mymap['z']=3003;
+
+		std::cout << "mymap contains:\n";
+
+		std::pair<char,int> highest = *mymap.rbegin();          // last element
+
+		std::map<char,int>::iterator it = mymap.begin();
+		do {
+		std::cout << it->first << " => " << it->second << '\n';
+		} while ( mymap.value_comp()(*it++, highest) );
+		}
+		std::cout << "//\t\t" <<	"KEY_COMP" << std::endl;
+		{
+		std::map<char,int> mymap;
+
+		std::map<char,int>::key_compare mycomp = mymap.key_comp();
+
+		mymap['a']=100;
+		mymap['b']=200;
+		mymap['c']=300;
+
+		std::cout << "mymap contains:\n";
+
+		char highest = mymap.rbegin()->first;     // key value of last element
+
+		std::map<char,int>::iterator it = mymap.begin();
+		do {
+		std::cout << it->first << " => " << it->second << '\n';
+		} while ( mycomp((*it++).first, highest) );
+
+		std::cout << '\n';
+
+		}
+		}
+	 */
 
 
 
@@ -623,18 +683,18 @@ void	map_test()
 int main()
 {
 
-//	vector_test();
+	//	vector_test();
 
-//	utils_test();
+	//	utils_test();
 
-	 map_test();
-
-
+	map_test();
 
 
-//	auto stop = high_resolution_clock::now();
-//	auto duration = duration_cast<microseconds>(stop - start);
-//	std::cout << duration.count() << std::endl;
+
+
+	//	auto stop = high_resolution_clock::now();
+	//	auto duration = duration_cast<microseconds>(stop - start);
+	//	std::cout << duration.count() << std::endl;
 
 	return (0);
 }

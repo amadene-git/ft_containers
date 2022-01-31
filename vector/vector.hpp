@@ -9,6 +9,7 @@
 #include <iostream>
 #include <memory>
 #include <algorithm>
+#include <iterator>
 #include "vector_iterator.hpp"
 #include "reverse_iterator.hpp"
 
@@ -30,8 +31,8 @@ namespace ft
 		typedef	typename	allocator_type::pointer					pointer;
 		typedef typename	allocator_type::const_pointer			const_pointer;
 
-		typedef typename 	ft::Vector_Iterator<T>					iterator;
-		typedef	typename	ft::Vector_Iterator<const T>			const_iterator;
+		typedef typename 	ft::Vector_Iterator<value_type>					iterator;
+		typedef	typename	ft::Vector_Iterator<const value_type>			const_iterator;
 
 		typedef typename	ft::reverse_iterator<iterator>			reverse_iterator;
 		typedef typename	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
@@ -65,7 +66,7 @@ namespace ft
 
 		template <class InputIterator>
         vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = NULL)//A CORRIGER !!!
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
 		: _alloc(alloc), 
 		_ptr(_alloc.allocate(size_type(last - first))),
 		_size(size_type(last - first)),
