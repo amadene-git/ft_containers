@@ -134,6 +134,30 @@ std::make_pair,
 **less**
 */
 
+	template <class T1, class T2> // <- A completer !!!
+	struct	pair
+	{
+	public:
+		typedef	T1	first_type;
+		typedef	T2	second_type;
+
+		pair() {};
+
+		template<class U, class V>
+		pair(const pair<U,V>& pr)
+		: first(T1(pr.first)),
+		second(T2(pr.second))
+		{};
+
+		pair(const first_type& a, const second_type& b)
+		: first(a),
+		second(b)
+		{};
+
+		first_type	first;
+		second_type	second;
+	};
+
 
 
 	template <class Arg1, class Arg2, class Result>

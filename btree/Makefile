@@ -3,7 +3,7 @@ NAME = BTree
 CC = clang++
 CC_FLAGS =  -g -Wall -Wextra -Werror  -std=c++98 -Wfatal-errors -Wpedantic -Wconversion -Wshadow
 
-SRCS = main.cpp BTree.cpp 
+SRCS = main.cpp 
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 OBJS_DIR = ./objs
