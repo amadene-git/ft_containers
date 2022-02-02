@@ -11,19 +11,20 @@ namespace ft
     template < class Key,                                     // map::key_type
            class T,                                       // map::mapped_type
            class Compare = ft::less<Key>,                     // map::key_compare
-           class Alloc = std::allocator< std::pair<const Key,T> > >   // map::allocator_type SERIEUX MEC OUBLIE PAS D'IMPLEMENTER PAIR !!!!!!
+           class Alloc = std::allocator< ft::pair<const Key,T> > >   // map::allocator_type 
     class map
     {
     public:
 		
-		typedef             Key                         key_type;                                    		
-        typedef             T                           mapped_type;                                 		
+		typedef             Key                         key_type;
+        typedef             T                           mapped_type;
+		typedef				Compare						key_compare;
+	    typedef				Alloc						allocator_type;
        
-        typedef typename    std::pair<const key_type, mapped_type>			value_type;// <- A corriger !                                  		
+        typedef typename    ft::pair<const key_type, mapped_type>			value_type;                                  		
         
-		typedef				Compare						key_compare;                                 	
-       
-	    typedef     Alloc											allocator_type;                                  
+   
+   
     //   template <class Key, class T, class Compare, class Alloc>
 		class	value_compare : binary_function<value_type, value_type, bool>// class map<Key,T,Compare,Alloc>::value_compare
 		{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
@@ -39,25 +40,24 @@ namespace ft
 			}
 		};
 
-        
         typedef typename    allocator_type::reference                       reference;                                   	
         typedef typename    allocator_type::const_reference                 const_reference;                                 
         typedef typename    allocator_type::pointer                         pointer;                                 	    
         typedef typename    allocator_type::const_pointer                   const_pointer;                                   
-        
+
         typedef typename    std::iterator<std::bidirectional_iterator_tag, value_type>				iterator;// <- A corriger !
         typedef typename	std::iterator<std::bidirectional_iterator_tag, const value_type>		const_iterator;// <- A corriger !
-        
+
 		typedef typename	ft::reverse_iterator<iterator>					reverse_iterator;	
         typedef typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;	
-        
-		
+
+
 		typedef typename	ft::iterator_traits<iterator>::difference_type		difference_type;
         typedef    			size_t												size_type;// <- A vérifier !
 
 		~map()
 		{
-			std::cout << "Map default destructor called\n";
+			// std::cout << "Map default destructor called\n";
 		};
 
 
@@ -96,6 +96,7 @@ map (const map& x);
 	private :
 		allocator_type	_alloc;
 		key_compare		_comp;
+
 
 
     };

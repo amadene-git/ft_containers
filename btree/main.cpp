@@ -1,64 +1,79 @@
 #include <iostream>
 #include "BTree.hpp"
+#include <cstdlib>
 #include "../vector/utils.hpp"
 
 using namespace ft;
 using namespace std;
 
-#define COUNT 20
+#define COUNT 10
+
+template <class T>
+void	print_btree(Node<T> *root, int a = 0, int lvl = 0)
+{
+	if (root->right)
+		print_btree(root->right, 0, lvl + 1);
+	// else
+	// 	std::cout << std::endl;
+
+	for (int k = 1	; k < lvl; k++)
+		for (int i = 0; i < COUNT; i++)
+			std::cout << " ";
+	if (lvl)
+	{
+		for (int i = 0; i < COUNT - 5; i++)
+			std::cout << " ";
+		if (a)
+			std::cout << "\\";
+		else
+			std::cout << "/";
+		std::cout << "---<" << lvl << ">";
+	}
+
+	if (root->red)
+		std::cout << "\033[31m";
+	else
+		std::cout << "\033[32m";
+	std::cout << "[" <<root->data << "]";
+	std::cout << "\033[0m";
+	
+	
+	if (root->right && root->left)
+		std::cout << " <";
+	else
+	{
+		if (root->right)
+			std::cout << " /";
+		if (root->left)
+			std::cout << " \\";
+	}
+	std::cout << std::endl;
+
+	if (root->left)
+		print_btree(root->left, 1, lvl + 1);
+	// else
+	// 	std::cout << std::endl;
+
+
+}
 
 template<class T>
-void print2DUtil(BTree<T> *root, int space)
+void	print_data(T data)
 {
-    // Base case
-    if (root == NULL)
-        return;
- 
-    // Increase distance between levels
-    space += COUNT;
- 
-    // Process right child first
-    print2DUtil(root->getRight(), space);
- 
-    // Print current node after space
-    // count
-    cout<<endl;
-    for (int i = COUNT; i < space; i++)
-        cout<<" ";
-    cout << root->getValue() <<"\n";
- 
-    // Process left child
-    print2DUtil(root->getLeft(), space);
-}
- 
-// Wrapper over print2DUtil()
-template <class T>
-void print2D(BTree<T> *root)
-{
-    // Pass initial space count as 0
-    print2DUtil(root, 0);
+	std::cout << data << std::endl;
 }
 
 
 int main()
 {
-	BTree<int> node(0);
-	BTree<int> node1(1, &node);
-	BTree<int> node3(3);
-	BTree<int> node2(2, &node1, &node3);
-	BTree<int> node5(5);
-	BTree<int> node7(7);
-	BTree<int> node6(6, &node5, &node7);
-	BTree<int> node4(4, &node2, &node6);
+	srand (static_cast<unsigned int>( time(NULL) ) );
 
-	// node.insert(node1, node);
-	// node.insert(node2, node);
-	// node.insert(node3, node);
-	// node.insert(node4, node);
-	// node.insert(node5, node);
-	// node.insert(node6, node);
+	BTree<int> btree;
 
-	print2D(&node4);
+	for (int i = 0; i <50; i++)
+		btree.insert_RBT(rand() % 100);
+	
+	print_btree(btree.getRoot());
 
 	return (0);
 }
