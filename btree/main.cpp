@@ -11,6 +11,12 @@ using namespace std;
 template <class T>
 void	print_btree(Node<T> *root, int a = 0, int lvl = 0)
 {
+	if (!root)
+	{
+		std::cout << "Oh NO !" << std::endl;
+		return;
+	}
+	
 	if (root->right)
 		print_btree(root->right, 0, lvl + 1);
 	// else
@@ -27,8 +33,12 @@ void	print_btree(Node<T> *root, int a = 0, int lvl = 0)
 			std::cout << "\\";
 		else
 			std::cout << "/";
-		std::cout << "---<" << lvl << ">";
 	}
+		if (root->parent)
+			std::cout << "<" << root->parent->data;
+		else
+			std::cout << "<nil";
+		std::cout << "---<" << lvl << ">";
 
 	if (root->red)
 		std::cout << "\033[31m";
@@ -64,16 +74,36 @@ void	print_data(T data)
 }
 
 
+#include <chrono>
+using namespace std::chrono;
+auto start = high_resolution_clock::now();
+
+#include <map>
+
+
+template <class T>
+void	check_parent(Node<T> *root)
+{
+	if (root->left && root->left->parent != root)
+	{
+		std::cout << "oh no !!!" << root->left->data << std::endl;
+		return;
+	}
+	if (root->right && root->right->parent != root)
+	{
+		std::cout << "oh no !!!" << root->right->data << std::endl;
+		return;
+	}
+
+}
+
+#include "AVL.hpp"
+
 int main()
 {
-	srand (static_cast<unsigned int>( time(NULL) ) );
+	AVL_tree<int> tree;
 
-	BTree<int> btree;
+	tree.add(1);
 
-	for (int i = 0; i <50; i++)
-		btree.insert_RBT(rand() % 100);
-	
-	print_btree(btree.getRoot());
-
-	return (0);
+	std::cout << tree.data << std::endl;
 }
