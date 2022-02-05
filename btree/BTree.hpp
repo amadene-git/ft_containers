@@ -12,8 +12,8 @@ namespace ft
 	{
 	public:
 		
-		Node(T value = T(), Node<T> *p = NULL, Node<T> *l = NULL, Node<T> *r = NULL, bool b = true)
-		: data(value), left(l), right(r), parent(p), red(b)
+		Node(T value = T(), Node<T> *p = NULL)
+		: data(value), left(NULL), right(NULL), parent(p), red(1), l(0), r(0)
 		{};
 
 		Node<T>	&operator=(Node<T> const &rhs)
@@ -25,6 +25,8 @@ namespace ft
 				this->right	= rhs.right;
 				this->parent = rhs.parent;
 				this->red   = rhs.red;
+				this->r		= rhs.r;
+				this->l		= rhs.l;
 			}
 			return (*this);
 		};
@@ -37,6 +39,8 @@ namespace ft
 		Node<T>	*right;
 		Node<T> *parent;
 		bool	red;
+		int		l;
+		int		r;
 	};
 
 	template <class T, class Compare = ft::less<T>, class Alloc = std::allocator< Node<T> > >
@@ -158,13 +162,27 @@ namespace ft
 			return;
 		};
 		
-		bool	insert_RBT(T value, bool red = false, Node<T> *root = NULL)
+		void	insert_AVL_post(Node<T> *root)
+		{
+			if (root->l - root->r > 1)
+				insert_AVL_post(root->left);
+			if (root->l - root->r < -1)
+				insert_AVL_post(root->right);
+
+			if (root->l - root->r > 1)
+				right_rotate(root);
+			if (root->l - root->r < -1)
+				left_rotate(root);
+
+		}
+
+		void	insert_AVL(T value, Node<T> *root = NULL, int lvl = 0)
 		{
 			if (_root == NULL)
 			{
 				_root = _alloc.allocate(1);
 				_alloc.construct(_root, Node<T>(value));
-				return false;
+				return;
 			}
 
 			if (root == NULL)
@@ -172,38 +190,40 @@ namespace ft
 						
 			if (_comp(value, root->data))
 			{
+				++root->l;
 				if (root->left)
-					insert_RBT(value, root->red, root->left);
+					insert_AVL(value, root->left, lvl + 1);
 				else
 				{
 					root->left = _alloc.allocate(1);
-					_alloc.construct(root->left, Node<T>(value));
-					// std::cout << "\n\n\n\nHERE \n\n" << red << std::endl;
-					if (root->red)
-						root->left->red = false;
+					_alloc.construct(root->left, Node<T>(value, root));
 				}
-					if (red)
-						root->red = false;
-				return false;
+
+
 			}
 			else
 			{
+				++root->r;
 				if (root->right)
-					insert_RBT(value, root->red, root->right);
+					insert_AVL(value, root->right, lvl + 1);
 				else
 				{
 					root->right = _alloc.allocate(1);
-					_alloc.construct(root->right, Node<T>(value));
-					// std::cout << "\n\n\n\nHERE \n\n" << red << std::endl;
-					if (root->red)
-						root->right->red = false;
-
-					
+					_alloc.construct(root->right, Node<T>(value, root));
 				}
-				return false;
+				
+		
 			}
+			if (root->l - root->r > 1)
+				this->right_rotate(root);
+			else if (root->l - root->r < -1)
+				this->left_rotate(root);
 
-			return false;
+
+			if (!lvl)
+				insert_AVL_post(root);
+
+			return;
 		};
 
 		class BTreeException : public std::exception
@@ -234,8 +254,8 @@ namespace ft
 			Node<T>	*ptr = root->right;
 			Node<T> copy = *root;
 
-
 			*root = *root->right;
+			copy.r = root->l;
 			root->parent = copy.parent;
 
 			if (root->right)
@@ -250,23 +270,27 @@ namespace ft
 			
 			if (root->left && root->left->left)
 				root->left->left->parent = root->left;
+
+			root->l = ptr->l + ptr->r + 1;
+	
+	
 		};
 		void	right_rotate(Node<T> *root = NULL)
 		{
 			if (!root && !_root)
-				throw BTreeException("left_rotate error: btree is empty");
+				throw BTreeException("right_rotate error: btree is empty");
 
 			root = (root) ? root : _root;
 
 			if (!root->left)
-				throw BTreeException("left_rotate error: left child is empty");
+				throw BTreeException("right_rotate error: left child is empty");
 				
 
 			Node<T>	*ptr = root->left;
 			Node<T> copy = *root;
 
-
 			*root = *root->left;
+			copy.l = root->r;
 			root->parent = copy.parent;
 
 			if (root->left)
@@ -280,7 +304,11 @@ namespace ft
 			root->right = ptr;	
 			
 			if (root->right && root->right->right)
-				root->right->right->parent = root->right;		
+				root->right->right->parent = root->right;
+
+			root->r = ptr->l + ptr->r + 1;
+	
+	
 		};
 
 		void	getHeight(int *size, Node<T> *root = NULL, int lvl = 1)

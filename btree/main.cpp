@@ -34,12 +34,12 @@ void	print_btree(Node<T> *root, int a = 0, int lvl = 0)
 		else
 			std::cout << "/";
 	}
-		if (root->parent)
-			std::cout << "<" << root->parent->data;
-		else
-			std::cout << "<nil";
-		std::cout << "---<" << lvl << ">";
-
+	if (root->parent)
+		std::cout << "<" << root->parent->data;
+	else
+		std::cout << "<nil";
+	std::cout << "---<" << lvl << ">";
+	std::cout << root->l << "-" << root->r;
 	if (root->red)
 		std::cout << "\033[31m";
 	else
@@ -73,14 +73,6 @@ void	print_data(T data)
 	std::cout << data << std::endl;
 }
 
-
-#include <chrono>
-using namespace std::chrono;
-auto start = high_resolution_clock::now();
-
-#include <map>
-
-
 template <class T>
 void	check_parent(Node<T> *root)
 {
@@ -97,13 +89,30 @@ void	check_parent(Node<T> *root)
 
 }
 
-#include "AVL.hpp"
+
+#include <map>
+
+#include <chrono>
+using namespace std::chrono;
+auto start = high_resolution_clock::now();
 
 int main()
 {
-	AVL_tree<int> tree;
+	srand( time(NULL));
 
-	tree.add(1);
+	BTree<int> btree;
+	for (int i = 0; i < 50000000; i++)
+		btree.insert_BST(rand() % 100);
 
-	std::cout << tree.data << std::endl;
+	// std::map<int, int> mymap;
+	// for (int i = 0; i < 50000000; i++)
+	// 	mymap.insert(std::pair<int, int>(i, rand() % 1000));
+
+	// print_btree(btree.getRoot());
+
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	std::cout << duration.count() << std::endl;
+
+
 }
