@@ -10,8 +10,8 @@ namespace ft
 	class Vector_Iterator : public ft::iterator<random_access_iterator_tag, T>
 	{
 	public :
-			typedef	T&	reference;
-			typedef	T*	pointer;
+			typedef typename	ft::iterator<random_access_iterator_tag, T>::reference	reference;// T&
+			typedef typename	ft::iterator<random_access_iterator_tag, T>::pointer	pointer;// T*
 
 			typedef	typename	ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
 			typedef	typename	ft::iterator<random_access_iterator_tag, T>::value_type			value_type;
@@ -36,6 +36,7 @@ namespace ft
 
 			//OVERLOAD POINTER
 			reference	operator*(void) const { return (*_ptr); }
+			pointer		operator->(void) const { return &(this->operator*()); }
 
 			//OVERLOAD COMPARISON
 			bool	operator>(Vector_Iterator const &rhs)	const	{ return (_ptr >  rhs._ptr); };

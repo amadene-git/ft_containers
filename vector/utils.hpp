@@ -1,6 +1,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 #include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <uchar.h>
 
@@ -141,7 +142,7 @@ std::make_pair,
 		typedef	T1	first_type;
 		typedef	T2	second_type;
 
-		pair() {};
+		pair() : first(0), second(0) {};
 
 		template<class U, class V>
 		pair(const pair<U,V>& pr)
@@ -165,6 +166,9 @@ std::make_pair,
 		first_type	first;
 		second_type	second;
 	};
+
+	template <class T> 			struct is_pair						: false_type {};
+	template <class T, class K> struct is_pair< ft::pair<T, K> >	: true_type {};
 
 	template <class T1,class T2>
 	ft::pair<T1,T2> make_pair(T1 x, T2 y)
@@ -216,9 +220,24 @@ std::make_pair,
 		}
 	};
 
+	template <class T> 
+	struct greater : binary_function <T, T, bool>
+	{
+  		bool operator() (const T& x, const T& y) const 
+		{
+			return (x > y);
+		}
+	};
 
 
+	template <typename T>
+	std::string	to_str(T pouet)
+	{
+		std::stringstream ss;
 
+		ss << pouet;
+		return (ss.str());
+	}
 
 
 

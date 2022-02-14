@@ -2,7 +2,9 @@
 #define BTREE
 
 #include <iostream>
+#include <exception>
 #include "../vector/utils.hpp"
+#include "BTree_Iterator.hpp"
 
 namespace ft
 {
@@ -12,8 +14,10 @@ namespace ft
 	{
 	public:
 		
-		Node(T value = T(), Node<T> *p = NULL)
-		: data(value), left(NULL), right(NULL), parent(p), red(1), l(0), r(0)
+		typedef	 T	value_type;
+
+		Node(T value = T(), Node<T> *p = NULL, Node<T> *pv = NULL, Node<T> *nt = NULL)
+		: data(value), left(NULL), right(NULL), parent(p), next(nt), prev(pv), l(0), r(0)
 		{};
 
 		Node<T>	&operator=(Node<T> const &rhs)
@@ -24,7 +28,6 @@ namespace ft
 				this->left 	= rhs.left;
 				this->right	= rhs.right;
 				this->parent = rhs.parent;
-				this->red   = rhs.red;
 				this->r		= rhs.r;
 				this->l		= rhs.l;
 			}
@@ -38,50 +41,77 @@ namespace ft
 		Node<T>	*left;
 		Node<T>	*right;
 		Node<T> *parent;
-		bool	red;
+		Node<T>	*next;
+		Node<T>	*prev;
 		int		l;
 		int		r;
 	};
 
-	template <class T, class Compare = ft::less<T>, class Alloc = std::allocator< Node<T> > >
+	class BTreeException : public std::exception
+	{
+	public:
+		BTreeException(const std::string msg) : _msg(msg) {};
+ 		virtual ~BTreeException() throw() {return ;}
+	
+	private:
+		
+		virtual	const char * what () const throw () { return _msg.c_str(); };
+
+		const std::string _msg;
+
+	};
+	
+
+
+	template <class T, class Compare, class Alloc = std::allocator< Node<T> >, class AllocN = std::allocator< Node<T>* > >
 	class BTree
 	{
 	public:
 
-		BTree(Node<T> *root = NULL, Alloc const &alloc = Alloc(), Compare const &comp = Compare())
-		: _root(root), _alloc(alloc), _comp(comp)
+		typedef 			T												value_type;	
+		typedef typename	ft::Node<value_type>							node_type;
+		typedef	typename	Alloc::size_type								size_type;
+	
+		typedef	typename	ft::BTree_Iterator< node_type, Compare >		iterator;
+		typedef	typename	ft::BTree_const_Iterator< node_type, Compare >	const_iterator;
+			
+		BTree(node_type *root = NULL, Alloc const &alloc = Alloc(), Compare const &comp = Compare())
+		: _alloc(alloc), _comp(comp)
 		{
 			// std::cout << "BTree default constructor called\n";
-		};
+			this->_root = _allocN.allocate(1);
+			*(this->_root) = root;
 
-		BTree(Node<T> &root, Alloc const &alloc = Alloc(), Compare const &comp = Compare())
-		: _root(&root), _alloc(alloc), _comp(comp)
-		{
-			// std::cout << "BTree reference constructor called\n";
+			this->_end = _alloc.allocate(1);
+			this->_begin = this->_end;
+			_alloc.construct(this->_end, node_type());
 		};
 
 		~BTree(void)
 		{
 			// std::cout << "BTree default destructor called" << std::endl;
-			// this->clear();
+			this->clear();
+			_allocN.deallocate(_root, 1);
+			_alloc.deallocate(this->_end, 1);
+
 		};
 
-		void	setRoot(Node<T> *root)
+		void	setRoot(node_type *root)
 		{
-			_root = root;
+			*_root = root;
 		};
 
-		Node<T>	*getRoot(void) const
+		node_type	*getRoot(void) const
 		{
-			return (_root);
+			return (*_root);
 		};
 
-		void	clear(Node<T> *root = NULL)
+		void	clear(node_type *root = NULL)
 		{
-			if (_root == NULL)
+			if (!*_root)
 				return;
 			if (root == NULL)
-				root = _root;
+				root = *_root;
 			
 			if (root->left)
 				clear(root->left);
@@ -90,231 +120,139 @@ namespace ft
 			_alloc.deallocate(root, 1);
 		};
 
-		void	insert_BST(T value, Node<T> *root = NULL)
+		// void	equilibre(node_type )
+		// {
+
+		// }
+
+		ft::pair<iterator, bool>	insert_AVL_1(value_type &value, node_type &root)
 		{
-			if (_root == NULL)
-			{
-				_root = _alloc.allocate(1);
-				_alloc.construct(_root, Node<T>(value));
-				return;
-			}
+			ft::pair<iterator, bool>	pr;
 
-			if (root == NULL)
-				root = _root;
-						
-			if (_comp(value, root->data))
+			if (_comp(value.first, root.data.first))
 			{
-				if (root->left)
-					insert_BST(value, root->left);
-				else
+				++root.l;
+				if (root.left)
 				{
-					root->left = _alloc.allocate(1);
-					_alloc.construct(root->left, Node<T>(value, root));
-				}
-				return;
-			}
-			else
-			{
-				if (root->right)
-					insert_BST(value, root->right);
-				else
-				{
-					root->right = _alloc.allocate(1);
-					_alloc.construct(root->right, Node<T>(value, root));
-				}
-				return;
-			}
-			return;
-		};
-		void	insert_BST(Node<T> &to_insert, Node<T> *root = NULL)
-		{
-			if (_root == NULL)
-			{
-				_root = &to_insert;
-				return;
-			}
 
-			if (root == NULL)
-				root = _root;
-						
-			if (_comp(to_insert.data, root->data))
-			{
-				if (root->left)
-					insert_BST(to_insert, root->left);
-				else
-				{
-					root->left = &to_insert;
-					to_insert.parent = root;
-				}
-				return;
-			}
-			else
-			{
-				if (root->right)
-					insert_BST(to_insert, root->right);
-				else
-				{
-					root->right = &to_insert;
-					to_insert.parent = root;
-				}
-				return;
-			}
-			return;
-		};
-		
-		void	insert_AVL_post(Node<T> *root)
-		{
-			if (root->l - root->r > 1)
-				insert_AVL_post(root->left);
-			if (root->l - root->r < -1)
-				insert_AVL_post(root->right);
-
-			if (root->l - root->r > 1)
-				right_rotate(root);
-			if (root->l - root->r < -1)
-				left_rotate(root);
-
-		}
-
-		void	insert_AVL(T value, Node<T> *root = NULL, int lvl = 0)
-		{
-			if (_root == NULL)
-			{
-				_root = _alloc.allocate(1);
-				_alloc.construct(_root, Node<T>(value));
-				return;
-			}
-
-			if (root == NULL)
-				root = _root;
-						
-			if (_comp(value, root->data))
-			{
-				++root->l;
-				if (root->left)
-					insert_AVL(value, root->left, lvl + 1);
-				else
-				{
-					root->left = _alloc.allocate(1);
-					_alloc.construct(root->left, Node<T>(value, root));
-				}
-
-
-			}
-			else
-			{
-				++root->r;
-				if (root->right)
-					insert_AVL(value, root->right, lvl + 1);
-				else
-				{
-					root->right = _alloc.allocate(1);
-					_alloc.construct(root->right, Node<T>(value, root));
-				}
+					pr = insert_AVL_1(value, *root.left);
 				
-		
+				}
+				else
+				{
+					root.left = _alloc.allocate(1);
+					_alloc.construct(root.left, node_type(value, &root, root.prev, &root));
+					root.prev = root.left;
+					if (!root.left->prev)
+						_begin = root.left;
+			
+					return (ft::make_pair<iterator, bool> (root.left, true));
+				}
+
 			}
-			if (root->l - root->r > 1)
-				this->right_rotate(root);
-			else if (root->l - root->r < -1)
-				this->left_rotate(root);
+			else if (_comp(root.data.first, value.first))
+			{
+				++root.r;
+				if (root.right && root.next != this->_end)
+					pr = insert_AVL_1(value, *root.right);
+				else
+				{
+					root.right = _alloc.allocate(1);
+					_alloc.construct(root.right, node_type(value, &root, &root, root.next));
+					root.next = root.right;
+					return (ft::make_pair<iterator, bool>(root.right, true));
+				}
 
-
-			if (!lvl)
-				insert_AVL_post(root);
-
-			return;
+			}
+			else
+			{
+				return (ft::make_pair<iterator, bool>(&root, false));
+			}
+			if (root.l - root.r > 1)
+				this->right_rotate(&root);
+			else if (root.l - root.r < -1)
+				this->left_rotate(&root);
+			
+			return pr;
 		};
 
-		class BTreeException : public std::exception
+		ft::pair<iterator, bool>	insert_AVL(value_type value, node_type *root = NULL)
 		{
-		public:
-			BTreeException(const std::string& msg) : m_msg(msg)
-		    {};
+			if (*_root == NULL)
+			{
+				*_root = _alloc.allocate(1);
+				_alloc.construct(*_root, node_type(value));
+				this->_begin = *_root;
+				(*_root)->next = this->_end; 
+				return (ft::make_pair<iterator, bool>(root, true));
+			}
 
-			~BTreeException()
-		   	{};
+			if (root == NULL)
+				root = *_root;
+						
+			return ( insert_AVL_1(value, *root) );
 
-		   const std::string m_msg;
-
-		   virtual const char* what() const throw () { return m_msg.c_str(); };
 		};
 
-		void	left_rotate(Node<T> *root = NULL)
+		void	left_rotate(node_type *root)
 		{
-			if (!root && !_root)
-				throw BTreeException("left_rotate error: btree is empty");
+			if (!root)
+				return;
 
-			root = (root) ? root : _root;
+			// node_type 	*ptrA = root;
+			node_type	*ptrB = root->right;
 
-			if (!root->right)
-				throw BTreeException("left_rotate error: right child is empty");
-				
-
-			Node<T>	*ptr = root->right;
-			Node<T> copy = *root;
-
-			*root = *root->right;
-			copy.r = root->l;
-			root->parent = copy.parent;
+			if (root == *(this->_root))
+				*_root = ptrB;				
+			else
+			{
+				root->parent->right = (root->parent->right == root) ? ptrB : root->parent->right;
+				root->parent->left = (root->parent->left == root) ? ptrB : root->parent->left;
+			}
+			root->right = ptrB->left;
+			ptrB->left = root;
 
 			if (root->right)
 				root->right->parent = root;
+			ptrB->parent = root->parent;
+			root->parent = ptrB;
 
-			copy.right = root->left;
-			copy.parent = root;
+			root->r = ptrB->l;
+			ptrB->l = root->l + root->r + 1;
 
-			*ptr = copy;
-
-			root->left = ptr;	
-			
-			if (root->left && root->left->left)
-				root->left->left->parent = root->left;
-
-			root->l = ptr->l + ptr->r + 1;
-	
-	
 		};
-		void	right_rotate(Node<T> *root = NULL)
+		void	right_rotate(node_type *root)
 		{
-			if (!root && !_root)
-				throw BTreeException("right_rotate error: btree is empty");
+			if (!root)
+				return;
 
-			root = (root) ? root : _root;
+			// node_type 	*ptrA = root;
+			node_type	*ptrB = root->left;
 
-			if (!root->left)
-				throw BTreeException("right_rotate error: left child is empty");
-				
-
-			Node<T>	*ptr = root->left;
-			Node<T> copy = *root;
-
-			*root = *root->left;
-			copy.l = root->r;
-			root->parent = copy.parent;
+			if (root == *(this->_root))
+				*_root = ptrB;				
+			else
+			{
+				root->parent->left = (root->parent->left == root) ? ptrB : root->parent->left;
+				root->parent->right = (root->parent->right == root) ? ptrB : root->parent->right;
+			}
+			root->left = ptrB->right;
+			ptrB->right = root;
 
 			if (root->left)
 				root->left->parent = root;
+			ptrB->parent = root->parent;
+			root->parent = ptrB;
 
-			copy.left = root->right;
-			copy.parent = root;
+			root->l = ptrB->r;
+			ptrB->r = root->l + root->r + 1;
 
-			*ptr = copy;
-
-			root->right = ptr;	
-			
-			if (root->right && root->right->right)
-				root->right->right->parent = root->right;
-
-			root->r = ptr->l + ptr->r + 1;
-	
-	
 		};
 
-		void	getHeight(int *size, Node<T> *root = NULL, int lvl = 1)
+		void	getHeight(int *size, node_type *root = NULL, int lvl = 1)
 		{
 			if (!root)
-				root = _root;
+				root = *_root;
 			if (!root)
 				return;
 			if (!lvl)
@@ -325,10 +263,10 @@ namespace ft
 				getHeight(size, root->right, lvl + 1);
 			*size = (lvl > *size) ? lvl : *size;
 		};
-		unsigned int	getSize(Node<T> *root = NULL, int lvl = 1)// temporaire hein...
+		unsigned int	getSize(node_type *root = NULL, int lvl = 1)// temporaire hein...
 		{
 			if (!root)
-				root = _root;
+				root = *_root;
 			if (!root)
 				return (0);
 			
@@ -336,106 +274,27 @@ namespace ft
 				lvl = getSize(root->left, lvl + 1);
 			if (root->right)
 				lvl = getSize(root->right, lvl + 1);
-			return (lvl);
+			return (unsigned(lvl));
 		};
 
-
-//		APPLY FUNCTIONS		
-		void	prefix(void (*fct)(Node<T> *), Node<T> *root = NULL)
+		node_type	*get_begin() const
 		{
-			if (_root == NULL)
-				return;
-			if (root == NULL)
-				root = _root;
-			
-			fct(root);
-
-			if (root->left)
-				prefix(fct, root->left);
-			if (root->right)
-				prefix(fct, root->right);
+			return (_begin);
 		};
-		void	infix(void (*fct)(Node<T> *) = NULL, Node<T> *root = NULL)
+
+		node_type	*get_end() const
 		{
-			if (_root == NULL)
-				return;
-
-			if (root == NULL)
-				root = _root;
-			
-			if (root->left)
-				infix(fct, root->left);
-			
-			fct(root);
-			
-			if (root->right)
-				infix(fct, root->right);
+			return (_end);
 		};
-		void	postfix(void (*fct)(Node<T> *) = NULL, Node<T> *root = NULL)
-		{
-			if (_root == NULL)
-				return;
 
-			if (root == NULL)
-				root = _root;
-			
-			if (root->left)
-				postfix(fct, root->left);
-			if (root->right)
-				postfix(fct, root->right);
-			
-			fct(root);
-		};
-		void	rev_prefix(void (*fct)(Node<T> *), Node<T> *root = NULL)
-		{
-			if (_root == NULL)
-				return;
-			if (root == NULL)
-				root = _root;
-			
-			fct(root);
-
-			if (root->right)
-				prefix(fct, root->right);
-			if (root->left)
-				prefix(fct, root->left);
-		};
-		void	rev_infix(void (*fct)(Node<T>) = NULL, Node<T> *root = NULL)
-		{
-			if (_root == NULL)
-				return;
-
-			if (root == NULL)
-				root = _root;
-			
-			if (root->right)
-				infix(fct, root->right);
-			
-			fct(root);
-			
-			if (root->left)
-				infix(fct, root->left);
-		};
-		void	rev_postfix(void (*fct)(Node<T> *) = NULL, Node<T> *root = NULL)
-		{
-			if (_root == NULL)
-				return;
-
-			if (root == NULL)
-				root = _root;
-			
-			if (root->right)
-				postfix(fct, root->right);
-			if (root->left)
-				postfix(fct, root->left);
-			
-			fct(root);
-		};
 
 	private:
-		Node<T>		*_root;
-		Alloc		_alloc;
-		Compare		_comp;
+		node_type	**_root;
+		Alloc				_alloc;
+		AllocN				_allocN;
+		Compare				_comp;
+		node_type	*_begin;
+		node_type	*_end;
 
 	};
 
