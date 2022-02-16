@@ -6,119 +6,119 @@
 using namespace ft;
 using namespace std;
 
-#define COUNT 10
+// #define COUNT 10
 
-template <class T>
-void	print_btree(Node<T> *root, int a = 0, int lvl = 0, 
-typename ft::enable_if<ft::is_integral<T>::value, T>::type* = NULL)
-{
-	if (!root)
-	{
-		std::cout << "Oh NO !" << std::endl;
-		return;
-	}
+// template <class T>
+// void	print_btree(Node<T> *root, int a = 0, int lvl = 0, 
+// typename ft::enable_if<ft::is_integral<T>::value, T>::type* = NULL)
+// {
+// 	if (!root)
+// 	{
+// 		std::cout << "Oh NO !" << std::endl;
+// 		return;
+// 	}
 	
-	if (root->right)
-		print_btree(root->right, 0, lvl + 1);
-	// else
-	// 	std::cout << std::endl;
+// 	if (root->right)
+// 		print_btree(root->right, 0, lvl + 1);
+// 	// else
+// 	// 	std::cout << std::endl;
 
-	for (int k = 1	; k < lvl; k++)
-		for (int i = 0; i < COUNT; i++)
-			std::cout << " ";
-	if (lvl)
-	{
-		for (int i = 0; i < COUNT - 5; i++)
-			std::cout << " ";
-		if (a)
-			std::cout << "\\";
-		else
-			std::cout << "/";
-	}
-	if (root->parent)
-		std::cout << "<" << root->parent->data;
-	else
-		std::cout << "<nil";
-	std::cout << "---<" << lvl << ">";
-	std::cout << root->l << "-" << root->r;
-	std::cout << "[" <<root->data << "]";
-	std::cout << "\033[0m";
-	
-	
-	if (root->right && root->left)
-		std::cout << " <";
-	else
-	{
-		if (root->right)
-			std::cout << " /";
-		if (root->left)
-			std::cout << " \\";
-	}
-	std::cout << std::endl;
-
-	if (root->left)
-		print_btree(root->left, 1, lvl + 1);
-	// else
-	// 	std::cout << std::endl;
-
-
-}
-
-template <class T>
-void	print_btree(Node<T> *root, int a = 0, int lvl = 0,
-typename ft::enable_if< ft::is_pair<T>::value, T >::type* = NULL)
-{
-	if (!root)
-	{
-		std::cout << "Oh NO !" << std::endl;
-		return;
-	}
-	
-	if (root->right)
-		print_btree(root->right, 0, lvl + 1);
-	// else
-	// 	std::cout << std::endl;
-
-	for (int k = 1	; k < lvl; k++)
-		for (int i = 0; i < COUNT; i++)
-			std::cout << " ";
-	if (lvl)
-	{
-		for (int i = 0; i < COUNT - 5; i++)
-			std::cout << " ";
-		if (a)
-			std::cout << "\\";
-		else
-			std::cout << "/";
-	}
-	if (root->parent)
-		std::cout << "<" << root->parent->data.first;
-	else
-		std::cout << "<nil";
-	std::cout << "---<" << lvl << ">";
-//	std::cout << root->l << "-" << root->r;
-	std::cout << "[" << root->data.first << ", " << root->data.second << "]";
-	std::cout << "\033[0m";
+// 	for (int k = 1	; k < lvl; k++)
+// 		for (int i = 0; i < COUNT; i++)
+// 			std::cout << " ";
+// 	if (lvl)
+// 	{
+// 		for (int i = 0; i < COUNT - 5; i++)
+// 			std::cout << " ";
+// 		if (a)
+// 			std::cout << "\\";
+// 		else
+// 			std::cout << "/";
+// 	}
+// 	if (root->parent)
+// 		std::cout << "<" << root->parent->data;
+// 	else
+// 		std::cout << "<nil";
+// 	std::cout << "---<" << lvl << ">";
+// 	std::cout << root->l << "-" << root->r;
+// 	std::cout << "[" <<root->data << "]";
+// 	std::cout << "\033[0m";
 	
 	
-	if (root->right && root->left)
-		std::cout << " <";
-	else
-	{
-		if (root->right)
-			std::cout << " /";
-		if (root->left)
-			std::cout << " \\";
-	}
-	std::cout << std::endl;
+// 	if (root->right && root->left)
+// 		std::cout << " <";
+// 	else
+// 	{
+// 		if (root->right)
+// 			std::cout << " /";
+// 		if (root->left)
+// 			std::cout << " \\";
+// 	}
+// 	std::cout << std::endl;
 
-	if (root->left)
-		print_btree(root->left, 1, lvl + 1);
-	// else
-	// 	std::cout << std::endl;
+// 	if (root->left)
+// 		print_btree(root->left, 1, lvl + 1);
+// 	// else
+// 	// 	std::cout << std::endl;
 
 
-}
+// }
+
+// template <class T>
+// void	print_btree(Node<T> *root, int a = 0, int lvl = 0,
+// typename ft::enable_if< ft::is_pair<T>::value, T >::type* = NULL)
+// {
+// 	if (!root)
+// 	{
+// 		std::cout << "Oh NO !" << std::endl;
+// 		return;
+// 	}
+	
+// 	if (root->right)
+// 		print_btree(root->right, 0, lvl + 1);
+// 	// else
+// 	// 	std::cout << std::endl;
+
+// 	for (int k = 1	; k < lvl; k++)
+// 		for (int i = 0; i < COUNT; i++)
+// 			std::cout << " ";
+// 	if (lvl)
+// 	{
+// 		for (int i = 0; i < COUNT - 5; i++)
+// 			std::cout << " ";
+// 		if (a)
+// 			std::cout << "\\";
+// 		else
+// 			std::cout << "/";
+// 	}
+// 	if (root->parent)
+// 		std::cout << "<" << root->parent->data.first;
+// 	else
+// 		std::cout << "<nil";
+// 	std::cout << "---<" << lvl << ">";
+// //	std::cout << root->l << "-" << root->r;
+// 	std::cout << "[" << root->data.first << ", " << root->data.second << "]";
+// 	std::cout << "\033[0m";
+	
+	
+// 	if (root->right && root->left)
+// 		std::cout << " <";
+// 	else
+// 	{
+// 		if (root->right)
+// 			std::cout << " /";
+// 		if (root->left)
+// 			std::cout << " \\";
+// 	}
+// 	std::cout << std::endl;
+
+// 	if (root->left)
+// 		print_btree(root->left, 1, lvl + 1);
+// 	// else
+// 	// 	std::cout << std::endl;
+
+
+// }
 
 template<class T>
 void	print_data(T data)
@@ -150,7 +150,7 @@ void	check_parent(Node<T> *root)
 
 #include "../vector/utils.hpp"
 #include "BTree_Iterator.hpp"
-#define N 1000
+#define N 10
 
 #include <sys/time.h>
 
@@ -190,6 +190,8 @@ int main()
 	pr = btree.insert_AVL(ft::pair<const int, int>(2, 42));
 
 	std::cout << pr.first->first << " " << pr.second << std::endl << std::endl;
+
+	btree.clear();
 	//  print_btree(btree.getRoot());
 
 

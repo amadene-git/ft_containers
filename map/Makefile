@@ -30,6 +30,7 @@ test			:   fclean ${TESTNAME}
 					@./${NAME} 		> 	${NAME}.ret
 					@./${TESTNAME} 	> 	${TESTNAME}.ret 
 					@diff out.ret testout.ret
+					@make fclean
 					@echo "\033[0;32m"TEST OK !	
 ${TESTSRCS}		:
 						@make re

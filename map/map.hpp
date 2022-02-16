@@ -55,7 +55,7 @@ namespace ft
         typedef typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;	
 
 
-		// typedef typename	ft::iterator_traits<iterator>::difference_type		difference_type;
+		typedef typename	ft::iterator_traits<iterator>::difference_type		difference_type;
         typedef    			size_t												size_type;// <- A vérifier !
 
 		~map()
@@ -74,18 +74,27 @@ namespace ft
 		{
 //			std::cout << "Map default constructor called\n";
 		};
+	// template <class InputIterator>
+	// map (InputIterator first, InputIterator last,
+    // const key_compare& comp = key_compare(),
+    // const allocator_type& alloc = allocator_type())
+	// :_alloc(alloc),
+	// _comp(comp),
+	// _btree(),
+	// _size(0)
+	// {
+	// 	while (first != last)
+	// 	{
+	// 		this->insert()
+	// 	}
+	// };
 /*
-range (2)	
-template <class InputIterator>
-  map (InputIterator first, InputIterator last,
-       const key_compare& comp = key_compare(),
-       const allocator_type& alloc = allocator_type());
 copy (3)	
 map (const map& x);
 */
 
 
-//	CAPACITY
+//	CAPACITY ****************************
 
 	bool		empty() const		{ return (!_size); };
 	size_type	size() const		{ return (_size); };
@@ -93,85 +102,110 @@ map (const map& x);
 
 //	MODIFIERS
 
-/*
-	iterator	insert(iterator position, const value_type& val)
-	{
-
-	};
-range (3)	
-template <class InputIterator>
-  void insert (InputIterator first, InputIterator last);
-*/
 	ft::pair<iterator, bool>	insert(const value_type& val)
 	{
 		ft::pair<iterator, bool> pr = _btree.insert_AVL(val);
 		_size += pr.second;
-		return (pr);
+		return (ft::make_pair<iterator, bool>(pr.first, pr.second));
+	};
+	iterator	insert(iterator position, const value_type& val)
+	{
+
+		(void)position;
+
+		ft::pair<iterator, bool> pr = _btree.insert_AVL(val);
+		_size += pr.second;
+		return (pr.first);
+
+	};
+	template <class InputIterator>
+	void insert (InputIterator first, InputIterator last)
+	{
+		while (first != last)
+		{
+			this->insert(ft::make_pair(first->first, first->second));
+			++first;
+		}
+	};
+	
+	void	swap(map& x)
+	{
+		Node<value_type> *tmp = this->_btree.getRoot();
+		
+		this->_btree.setRoot(x._btree.getRoot());
+		x._btree.setRoot(tmp);
+
+		size_t	size = this->_size;
+		this->_size = x._size;
+		x._size = size;
+
+		tmp = this->_btree.get_begin();
+		this->_btree.set_begin(x._btree.get_begin());
+		x._btree.set_begin(tmp);
+
+		tmp = this->_btree.get_end();
+		this->_btree.set_end(x._btree.get_end());
+		x._btree.set_end(tmp);
+
 	};
 
+	void	clear()
+	{
+		this->_btree.clear();
+		this->_size = 0;
+	};
+/*
+	(1)	
+     void erase (iterator position);
+(2)	
+size_type erase (const key_type& k);
+(3)	
+     void erase (iterator first, iterator last);
+*/
+
+//	ITERATOR	*****************************
+	iterator		begin()			{ return(_btree.get_begin()); };
+	const_iterator	begin()	const	{ return(const_iterator(_btree.get_begin())); };
+
+	iterator		end()			{ return(_btree.get_end()); };
+	const_iterator	end() const		{ return (const_iterator(_btree.get_end())); };
+
+	reverse_iterator		rbegin()			{ return(reverse_iterator(this->end())); };
+	const_reverse_iterator	rbegin()	const	{ return(reverse_iterator(this->end())); };
+
+	reverse_iterator		rend() 				{ return(reverse_iterator(this->begin())); };
+	const_reverse_iterator	rend() 		const	{ return(reverse_iterator(this->begin())); };
 
 
-//	ITERATOR
-	iterator	begin()
-	{
-		return (_btree.get_begin());
-	};
-	const_iterator	begin() const
-	{
-		return (const_iterator(_btree.get_begin()));
-	};
-
-
-	iterator	end()
-	{
-		return (_btree.get_end());
-	};
-	const_iterator	end() const
-	{
-		return (const_iterator(_btree.get_end()));
-	};
-
-	reverse_iterator	rbegin()
-	{
-		return (reverse_iterator(this->end()));
-	};
-	const_reverse_iterator	rbegin() const
-	{
-		return (reverse_iterator(this->end()));
-	};
-
-	reverse_iterator	rend()
-	{
-		return (reverse_iterator(this->begin()));
-	};
-	const_reverse_iterator	rend() const
-	{
-		return (reverse_iterator(this->begin()));
-	};
-
-//	ACCES
+//	ACCES *************************************
 	mapped_type	&operator[](const key_type& k)
 	{
-		// std::cout << "ok" << std::endl;
-		// std::cout << (*((this->insert(make_pair(k,mapped_type()))).first)).second << std::endl;
-		// std::cout << "ok" << std::endl;
-		// return (*((this->insert(make_pair(k,mapped_type()))).first)).second;
-		iterator tmp = this->find(k);
-		
-		if (tmp == this->end())
-			this->insert(ft::make_pair(k, mapped_type()));
-		tmp = this->find(k);
-		return ((*tmp).second);
-
+		return ((*((this->insert(ft::make_pair(k,mapped_type()))).first)).second);
 	};
 
 
 
 // OPERATION
-// const_iterator find (const key_type& k) const;
 	iterator	find(const key_type& k)
 	{
-		Node<value_type> *root = _btree.getRoot();
+		Node<value_type>	*root = _btree.getRoot();
+
+		while (root)
+		{
+			if (_comp(k, root->data.first))
+				root = root->left;
+			else if (_comp(root->data.first, k))
+				root = root->right;
+			else
+				break;
+		}
+		if (root)
+			return (root);
+		return (this->end());
+	};
+	const_iterator	find(const key_type& k) const
+	{
+		Node<value_type>	*root = _btree.getRoot();
 
 		while (root)
 		{
@@ -187,7 +221,14 @@ template <class InputIterator>
 		return (this->end());
 	};
 
-//	OBSERVERS
+	size_type	count(const key_type& k) const
+	{
+		if (this->find(k) == this->end())
+			return (0);
+		return (1);
+	};
+
+//	OBSERVERS ********************************************
 	key_compare		key_comp() const
 	{
 		return (key_compare());

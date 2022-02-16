@@ -106,24 +106,56 @@ namespace ft
 			return (*_root);
 		};
 
-		void	clear(node_type *root = NULL)
+		void	getHeight(int *size, node_type *root = NULL, int lvl = 1)
 		{
-			if (!*_root)
-				return;
-			if (root == NULL)
+			if (!root)
 				root = *_root;
+			if (!root)
+				return;
+			if (!lvl)
+				*size = 0;
+			if (root->left)
+				getHeight(size, root->left, lvl + 1);
+			if (root->right)
+				getHeight(size, root->right, lvl + 1);
+			*size = (lvl > *size) ? lvl : *size;
+		};
+		unsigned int	getSize(node_type *root = NULL, int lvl = 1)// temporaire hein...
+		{
+			if (!root)
+				root = *_root;
+			if (!root)
+				return (0);
 			
 			if (root->left)
-				clear(root->left);
+				lvl = getSize(root->left, lvl + 1);
 			if (root->right)
-				clear(root->right);
-			_alloc.deallocate(root, 1);
+				lvl = getSize(root->right, lvl + 1);
+			return (unsigned(lvl));
 		};
 
-		// void	equilibre(node_type )
-		// {
+		node_type	*get_begin()	const { return (_begin); };
+		node_type	*get_end()		const { return (_end); };
 
-		// }
+		void	set_begin(node_type *begin)	{ this->_begin = begin; };
+		void	set_end(node_type *end)		{ this->_end = end; };
+
+		void	clear(void)
+		{
+			if (!_root || !*_root)
+				return;
+			clear_rec(*_root);
+			*_root = NULL;
+		}
+		
+		void	clear_rec(node_type *root = NULL)
+		{			
+			if (root->left)
+				clear_rec(root->left);
+			if (root->right)
+				clear_rec(root->right);
+			_alloc.deallocate(root, 1);
+		};
 
 		ft::pair<iterator, bool>	insert_AVL_1(value_type &value, node_type &root)
 		{
@@ -133,11 +165,7 @@ namespace ft
 			{
 				++root.l;
 				if (root.left)
-				{
-
 					pr = insert_AVL_1(value, *root.left);
-				
-				}
 				else
 				{
 					root.left = _alloc.allocate(1);
@@ -159,39 +187,39 @@ namespace ft
 				{
 					root.right = _alloc.allocate(1);
 					_alloc.construct(root.right, node_type(value, &root, &root, root.next));
+				
+					if (root.next == this->_end)
+						this->_end->prev = root.right;
+					
 					root.next = root.right;
+				
 					return (ft::make_pair<iterator, bool>(root.right, true));
 				}
-
 			}
 			else
-			{
 				return (ft::make_pair<iterator, bool>(&root, false));
-			}
+			
 			if (root.l - root.r > 1)
 				this->right_rotate(&root);
 			else if (root.l - root.r < -1)
 				this->left_rotate(&root);
 			
-			return pr;
+			return (pr);
 		};
 
-		ft::pair<iterator, bool>	insert_AVL(value_type value, node_type *root = NULL)
+		ft::pair<iterator, bool>	insert_AVL(value_type value)
 		{
 			if (*_root == NULL)
 			{
 				*_root = _alloc.allocate(1);
 				_alloc.construct(*_root, node_type(value));
 				this->_begin = *_root;
-				(*_root)->next = this->_end; 
-				return (ft::make_pair<iterator, bool>(root, true));
+				(*_root)->next = this->_end;
+				this->_end->prev = *_root;
+				return (ft::make_pair<iterator, bool>(*_root, true));
 			}
 
-			if (root == NULL)
-				root = *_root;
-						
-			return ( insert_AVL_1(value, *root) );
-
+			return (insert_AVL_1(value, **_root));
 		};
 
 		void	left_rotate(node_type *root)
@@ -249,43 +277,7 @@ namespace ft
 
 		};
 
-		void	getHeight(int *size, node_type *root = NULL, int lvl = 1)
-		{
-			if (!root)
-				root = *_root;
-			if (!root)
-				return;
-			if (!lvl)
-				*size = 0;
-			if (root->left)
-				getHeight(size, root->left, lvl + 1);
-			if (root->right)
-				getHeight(size, root->right, lvl + 1);
-			*size = (lvl > *size) ? lvl : *size;
-		};
-		unsigned int	getSize(node_type *root = NULL, int lvl = 1)// temporaire hein...
-		{
-			if (!root)
-				root = *_root;
-			if (!root)
-				return (0);
-			
-			if (root->left)
-				lvl = getSize(root->left, lvl + 1);
-			if (root->right)
-				lvl = getSize(root->right, lvl + 1);
-			return (unsigned(lvl));
-		};
-
-		node_type	*get_begin() const
-		{
-			return (_begin);
-		};
-
-		node_type	*get_end() const
-		{
-			return (_end);
-		};
+		
 
 
 	private:
@@ -298,6 +290,65 @@ namespace ft
 
 	};
 
+
+//BTREE UTILS *******************************************
+#define COUNT 20
+
+template <class T>
+void	print_btree(ft::Node<T> *root, int a = 0, int lvl = 0,
+typename ft::enable_if< ft::is_pair<T>::value, T >::type* = NULL)
+{
+	if (!root)
+	{
+		std::cout << "Oh NO !" << std::endl;
+		return;
+	}
+	
+	if (root->right)
+		print_btree(root->right, 0, lvl + 1);
+	// else
+	// 	std::cout << std::endl;
+
+	for (int k = 1	; k < lvl; k++)
+		for (int i = 0; i < COUNT; i++)
+			std::cout << " ";
+	if (lvl)
+	{
+		for (int i = 0; i < COUNT - 5; i++)
+			std::cout << " ";
+		if (a)
+			std::cout << "\\";
+		else
+			std::cout << "/";
+	}
+	if (root->parent)
+		std::cout << "<" << root->parent->data.first;
+	else
+		std::cout << "<nil";
+	std::cout << "---<" << lvl << ">";
+	std::cout << root->l << "-" << root->r;
+	std::cout << "[" << root->data.first << ", " << root->data.second << "]";
+	std::cout << "\033[0m";
+	
+	
+	if (root->right && root->left)
+		std::cout << " <";
+	else
+	{
+		if (root->right)
+			std::cout << " /";
+		if (root->left)
+			std::cout << " \\";
+	}
+	std::cout << std::endl;
+
+	if (root->left)
+		print_btree(root->left, 1, lvl + 1);
+	// else
+	// 	std::cout << std::endl;
+
+
+}
 
 }
 

@@ -174,9 +174,11 @@ namespace ft
 					this->_node = this->_node->prev;
 				return (temp);
 			};
+			
+
 			// operator BTree_const_Iterator<T> () const { return (this->_ptr); };
 
-		private :
+		// private :
 			T		*_node;
 	};
 
