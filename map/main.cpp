@@ -250,13 +250,13 @@ int main()
 */
 	std::cout << "\t\t" <<	"//COUNT" << std::endl;
 	{
-		ft::map<char,int> mymap;
+		std::map<char,int> mymap;
 		char c;
 
 		mymap['a'] = 101;
 		mymap['c'] = 202;
 		mymap['f'] = 303;
-
+	
 		for (c = 'a'; c < 'h'; c++)
 		{
 			std::cout << c;
@@ -268,39 +268,82 @@ int main()
 	}
 	std::cout << "\t\t" <<	"//LOWER/UPPER BOUND" << std::endl;
 	{
-		std::map<char,int> mymap;
-		std::map<char,int>::iterator itlow,itup;
+		ft::map<char,int> mymap;
+		ft::map<char,int>::iterator	itlow, itup;
 
 		mymap['a'] = 20;
-		mymap['b'] = 40;
-		mymap['c'] = 60;
-		mymap['d'] = 80;
-		mymap['e'] = 100;
+		mymap['f'] = 40;
+		mymap['m'] = 60;
+		mymap['w'] = 80;
+		mymap['y'] = 100;
 
-		itlow = mymap.lower_bound ('b');  // itlow points to b
-		itup = mymap.upper_bound ('d');   // itup points to e (not d!)
+		for (char a = 'a'; a < 'z'; ++a)
+		{
+			itlow = mymap.lower_bound (a);  // itlow points to b
+			itup = mymap.upper_bound (a);   // itup points to e (not d!)
 
-		std::cout << "low -> " << itlow->first << std::endl;
-		std::cout << "up  -> " << itup->first << std::endl;
+			if (itlow != mymap.end())
+				std::cout << "low -> " << itlow->first << std::endl;
+			if (itup != mymap.end())
+				std::cout << "up -> " << itup->first << std::endl;
+		}
+		// std::cout << "up  -> " << itup->first << std::endl;
 		// mymap.erase(itlow,itup);        // erases [itlow,itup)
 
 		// print content:
-		for (std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+		for (ft::map<char,int>::iterator it = mymap.begin(); it != mymap.end(); ++it)
 			std::cout << it->first << " => " << it->second << '\n';
+	}
+	std::cout << "\t\t" <<	"//EQUAL_RANGE" << std::endl;
+	{
+		ft::map<char,int> mymap;
+
+
+		for (char c = 'a'; c < 'z'; c += 3)
+			mymap[c] = c * 12;
+
+		ft::pair<ft::map<char,int>::iterator,ft::map<char,int>::iterator> ret;
+
+		for (char c = 'a'; c < 'z'; c++)
+		{
+			ret = mymap.equal_range('b');
+
+			std::cout << "lower bound points to: ";
+			std::cout << ret.first->first << " => " << ret.first->second << '\n';
+
+			std::cout << "upper bound points to: ";
+			std::cout << ret.second->first << " => " << ret.second->second << '\n';
+		}
+	}
+	std::cout << "\n\t" <<	"//GET_ALLOCATOR" << std::endl;
+	{
+		int psize;
+  		std::map<char,int> mymap;
+  		std::pair<const char,int>* p;
+		
+  		// allocate an array of 5 elements using mymap's allocator:
+  		p=mymap.get_allocator().allocate(5);
+		
+  		// assign some values to array
+  		psize = sizeof(std::map<char,int>::value_type)*5;
+		
+  		std::cout << "The allocated array has a size of " << psize << " bytes.\n";
+		
+  		mymap.get_allocator().deallocate(p,5);
 	}
 
 	std::cout << "RANDOM" << std::endl;
 
-	ft::map<int, int> mymap;
+	std::map<char, int> mymap;
 
-	ft::pair<ft::map<int, int>::iterator, bool> pr = mymap.insert(ft::make_pair<int, int>(42, 53));
+	std::map<char, int>::iterator itend = mymap.end();
 
-//	ft::map<int,int>::iterator it = mymap.begin();
+	std::map<char, int>::iterator it = mymap.lower_bound('a');
 
-//	std::cout << it-> << std::endl;
+	std::cout << "->" <<  it->first << std::endl;
+	std::cout << "end ->" <<  itend->first << std::endl;
 
 	// pr.first = mymap.begin();
-	 std::cout << pr.first->first << std::endl;
 
 
 

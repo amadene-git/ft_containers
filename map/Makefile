@@ -27,8 +27,8 @@ TESTOBJS = $(TESTSRCS:%.cpp=$(OBJS_DIR)/%.o)
 TESTDEP = $(TESTOBJS:%.o=%.d)
 
 test			:   fclean ${TESTNAME}
-					@./${NAME} 		> 	${NAME}.ret
-					@./${TESTNAME} 	> 	${TESTNAME}.ret 
+					@./${NAME} 		| cat -e > 	${NAME}.ret
+					@./${TESTNAME} 	| cat -e > 	${TESTNAME}.ret 
 					@diff out.ret testout.ret
 					@make fclean
 					@echo "\033[0;32m"TEST OK !	

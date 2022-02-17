@@ -1,12 +1,10 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-// #include <utility>//std::pair
 #include "../vector/iterator.hpp"
 #include "../vector/reverse_iterator.hpp"
 #include "../btree/BTree.hpp"
 #include "../btree/BTree_Iterator.hpp"
-#include <iterator>//bidirectional
 
 namespace ft
 {
@@ -25,7 +23,7 @@ namespace ft
 		typedef 			std::allocator< int >		allocator_int;// <- chelou A corriger !!!
 
        
-        typedef typename    ft::pair<const key_type, mapped_type>			value_type;// const key_type                                  		
+        typedef typename    ft::pair<const key_type, mapped_type>			value_type;                         		
         
    
    
@@ -69,8 +67,8 @@ namespace ft
         			const allocator_type& alloc = allocator_type())
 		:_alloc(alloc),
 		_comp(comp),
-		_btree(),
-		_size(0)
+		_size(0),
+		_btree()
 		{
 //			std::cout << "Map default constructor called\n";
 		};
@@ -106,24 +104,25 @@ map (const map& x);
 	{
 		ft::pair<iterator, bool> pr = _btree.insert_AVL(val);
 		_size += pr.second;
+		// this->end()->first = size;
+		
 		return (ft::make_pair<iterator, bool>(pr.first, pr.second));
 	};
 	iterator	insert(iterator position, const value_type& val)
 	{
-
 		(void)position;
 
-		ft::pair<iterator, bool> pr = _btree.insert_AVL(val);
-		_size += pr.second;
+		ft::pair<iterator, bool> pr = this->_btree.insert_AVL(val);
+		this->_size += pr.second;
 		return (pr.first);
-
 	};
 	template <class InputIterator>
 	void insert (InputIterator first, InputIterator last)
 	{
+		ft::pair<iterator, bool> pr;
 		while (first != last)
 		{
-			this->insert(ft::make_pair(first->first, first->second));
+			this->_size  += this->insert(ft::make_pair(first->first, first->second)).second;
 			++first;
 		}
 	};
@@ -185,7 +184,7 @@ size_type erase (const key_type& k);
 
 
 
-// OPERATION
+// OPERATION ***************************************
 	iterator	find(const key_type& k)
 	{
 		Node<value_type>	*root = _btree.getRoot();
@@ -228,6 +227,80 @@ size_type erase (const key_type& k);
 		return (1);
 	};
 
+	iterator	lower_bound(const key_type& k)
+	{
+		if (_comp((--this->end())->first, k))
+			return (this->end());
+		
+		Node<value_type> *root = this->_btree.getRoot();
+
+		while (root)
+		{
+			if (_comp(root->data.first, k) && root->right)
+				root = root->right;
+			else if (_comp(k, root->data.first) && root->left)
+				root = root->left;
+			else if (root->data.first == k)
+				return (root);
+			else
+				break;
+		}
+		while (_comp(root->data.first, k))
+			root = root->parent;
+		
+		return (root);
+
+	};
+	const_iterator	lower_bound(const key_type& k) const
+	{
+		if (_comp((--this->end())->first, k))
+			return (this->end());
+		
+		Node<value_type> *root = this->_btree.getRoot();
+
+		while (root)
+		{
+			if (_comp(root->data.first, k) && root->right)
+				root = root->right;
+			else if (_comp(k, root->data.first) && root->left)
+				root = root->left;
+			else if (root->data.first == k)
+				return (root);
+			else
+				break;
+		}
+		while (_comp(root->data.first, k))
+			root = root->parent;
+		
+		return (root);	
+	};
+
+	iterator	upper_bound(const key_type& k)
+	{
+		iterator	it = lower_bound(k);
+
+		if (it == this->end() || _comp(k, it->first))
+			return (it);
+		return (++it);
+	};
+	const_iterator	upper_bound(const key_type& k) const
+	{
+		iterator	it = lower_bound(k);
+
+		if (it == this->end() || _comp(k, it->first))
+			return (it);
+		return (++it);
+	};
+
+	pair<const_iterator,const_iterator>	equal_range(const key_type& k) const
+	{
+		return (ft::make_pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k)));
+	};
+	pair<iterator,iterator> equal_range (const key_type& k)
+	{
+		return (ft::make_pair<iterator, iterator>(lower_bound(k), upper_bound(k)));
+	};
+
 //	OBSERVERS ********************************************
 	key_compare		key_comp() const
 	{
@@ -239,20 +312,18 @@ size_type erase (const key_type& k);
 		return (value_compare(key_compare()));
 	};
 
+//	ALLOCATOR
 
-
-	Node<value_type>	*get_btree()// A effacer !!!!!!!!!
+	allocator_type	get_allocator() const
 	{
-		return (_btree.getRoot());
+		return (allocator_type(_alloc));
 	};
-
-
 
 	private :
 		allocator_type		_alloc;
 		key_compare			_comp;
-		BTree<value_type, key_compare>	_btree;
 		size_type			_size;
+		BTree<value_type, key_compare>	_btree;
 
 
     };

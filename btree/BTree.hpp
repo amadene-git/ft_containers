@@ -277,6 +277,38 @@ namespace ft
 
 		};
 
+		void	erase(node_type *root)
+		{
+			node_type	*tmp = root->right;
+
+			std::cout << "1" << std::endl;
+			while (tmp->left)
+				tmp = tmp->left;
+			std::cout << "2" << std::endl;
+			
+			tmp->parent->left = (tmp->parent->left == tmp) ? NULL : tmp->parent->left;
+			tmp->parent->right = (tmp->parent->right == tmp) ? NULL : tmp->parent->right;
+
+			
+			if (root == *(this->_root))
+				*_root = tmp;				
+			else
+			{
+				root->parent->left = (root->parent->left == root) ? tmp : root->parent->left;
+				root->parent->right = (root->parent->right == root) ? tmp : root->parent->right;
+			}
+			std::cout << "3" << std::endl;
+
+			if (tmp != root->left)
+				tmp->left = root->left;
+			if (tmp != root->right)
+				tmp->right = root->right;
+
+			std::cout << "4" << std::endl;
+
+			_alloc.deallocate(root, 1);
+			std::cout << "5" << std::endl;
+		};
 		
 
 
@@ -328,7 +360,7 @@ typename ft::enable_if< ft::is_pair<T>::value, T >::type* = NULL)
 	std::cout << "---<" << lvl << ">";
 	std::cout << root->l << "-" << root->r;
 	std::cout << "[" << root->data.first << ", " << root->data.second << "]";
-	std::cout << "\033[0m";
+	// std::cout << "\033[0m";
 	
 	
 	if (root->right && root->left)
