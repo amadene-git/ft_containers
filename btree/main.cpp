@@ -150,7 +150,7 @@ void	check_parent(Node<T> *root)
 
 #include "../vector/utils.hpp"
 #include "BTree_Iterator.hpp"
-#define N 20
+#define N 10
 
 #include <sys/time.h>
 
@@ -184,14 +184,18 @@ int main()
 
 	
 
+
 	ft::print_btree(btree.getRoot());
 
-	btree.erase(btree.getRoot()->right);
+
+	// btree.erase(btree.getRoot()->right->right->right);
+	std::cout << "***********************************************************************************************" << std::endl;
+	ft::print_btree(btree.getRoot());
 	
 	// std::cout << std::endl << btree.getRoot()->data.first << std::endl;
 	// std::cout << btree.getRoot()->right->data.first << std::endl;
 
-	ft::print_btree(btree.getRoot());
+	// ft::print_btree(btree.getRoot());
 
 
 }
