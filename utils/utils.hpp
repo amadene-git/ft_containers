@@ -1,7 +1,9 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
+
 #include <stdio.h>
 #include <uchar.h>
+#include "../iterator/iterator.hpp"
 
 namespace ft
 {
@@ -19,6 +21,7 @@ namespace ft
 
 	typedef integral_constant<bool,true> true_type;
 	typedef integral_constant<bool,false> false_type;
+
 
 
 	template <class T> struct is_integral				: false_type {};
@@ -208,14 +211,9 @@ namespace ft
 	};
 
 
-	// template <typename T>
-	// std::string	to_str(T pouet)
-	// {
-	// 	std::stringstream ss;
+	template<class A, class B> struct is_same_type		: false_type {};
+	template <class T> struct is_same_type<T, T>		: true_type {};		
 
-	// 	ss << pouet;
-	// 	return (ss.str());
-	// }
 
 }
 #endif

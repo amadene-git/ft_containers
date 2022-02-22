@@ -69,8 +69,8 @@ namespace ft
         vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
 		: _alloc(alloc), 
-		_ptr(_alloc.allocate(size_type(last - first))),
-		_size(size_type(last - first)),
+		_ptr(_alloc.allocate(size_type(ft::distance<InputIterator>(first, last)))),
+		_size(size_type(ft::distance<InputIterator>(first, last))),
 		 _capacity(_size)
 		{
 			std::copy(first, last, _ptr);
@@ -222,9 +222,9 @@ namespace ft
 		
 		template<typename InputIterator>
         void assign(InputIterator first, InputIterator last,
-		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = NULL)//A CORRIGER !!!
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
         {
-			if (static_cast<size_type>(last - first) > _alloc.max_size())
+			if (static_cast<size_type>(ft::distance<InputIterator>(first, last)) > _alloc.max_size())
 				throw (std::length_error("cannot create ft::vector larger than max_size()"));
 			this->clear();
 			while (first != last)
@@ -273,10 +273,10 @@ namespace ft
 		void insert (iterator position, InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
 		{
-			if (static_cast<size_type>(last - first) > _alloc.max_size())
+			if (static_cast<size_type>(ft::distance<InputIterator>(first, last)) > _alloc.max_size())
 				throw (std::length_error("cannot create ft::vector larger than max_size()"));
 
-			difference_type	diff = last - first;	
+			difference_type	diff = ft::distance<InputIterator>(first, last);	
 			difference_type	pos = position - this->begin();
 			
 			if (!_size)
