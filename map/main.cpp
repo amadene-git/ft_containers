@@ -1,10 +1,10 @@
-#include "map.hpp"
 #include <map>
 #include <iostream>
 #include <string>
+#include "../containers/map.hpp"
+
 
 #include <sys/time.h>
-
 int	getrandom(int max)
 {
 	struct timeval tv;
@@ -15,13 +15,51 @@ int	getrandom(int max)
 	return ((tv.tv_usec * tv.tv_sec) % max);
 }
 
+bool fncomp (char lhs, char rhs) {return lhs<rhs;}
+
+struct classcomp {
+  bool operator() (const char& lhs, const char& rhs) const
+  {return lhs<rhs;}
+};
 
 
 int main()
 {
 	std::cout << 			"//MAP" << std::endl;
-/*
-	std::cout << "\t" << 	"//CAPACITY" << std::endl;
+	std::cout << "\t" <<	"//CONSTRUCTOR" << std::endl;
+	{
+		std::map<char,int> first;
+
+		first['a']=10;
+		first['b']=30;
+		first['c']=50;
+		first['d']=70;
+
+		std::map<char,int> second (first.begin(),first.end());
+
+		std::map<char,int> third (second);
+
+		std::map<char,int,classcomp> fourth;                 // class as Compare
+
+		bool(*fn_pt)(char,char) = fncomp;
+		std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
+	}
+	std::cout << "\t" <<	"OPERATOR =" << std::endl;
+	{
+		std::map<char,int> first;
+		std::map<char,int> second;
+
+		first['x']=8;
+		first['y']=16;
+		first['z']=32;
+
+		second=first;                // second now contains 3 ints
+		first=std::map<char,int>();  // and first is now empty
+
+		std::cout << "Size of first: " << first.size() << '\n';
+		std::cout << "Size of second: " << second.size() << '\n';
+	}
+	std::cout << "\n\t" << 	"//CAPACITY" << std::endl;
 	std::cout << "\t\t" <<	"//EMPTY" << std::endl;
 	{
 		ft::map<char,int> mymap;
@@ -330,59 +368,6 @@ int main()
   		mymap.get_allocator().deallocate(p,5);
 	}
 
-	std::cout << "RANDOM" << std::endl;
-
-	std::map<char, int> mymap;
-
-	std::map<char, int>::iterator itend = mymap.end();
-
-	std::map<char, int>::iterator it = mymap.lower_bound('a');
-
-	std::cout << "->" <<  it->first << std::endl;
-	std::cout << "end ->" <<  itend->first << std::endl;
-
-	// pr.first = mymap.begin();
-
-
-
-
-	// ft::map<int, int > mymap;
-
-
-
-	// for (int i = 0; i < 20; ++i)
-	// {
-	// 	// int a = getrandom(100);
-	// 	mymap.insert( ft::pair<const int, int>(i, i) );
-	// }
-
-
-
-
-	// print_btree(mymap.get_btree());
-
-	
-	// std::cout << mymap.find(42)->second << std::endl;
-
-*/	
-	struct timeval tv1;
-	struct timeval tv2;
-	int n = getrandom(50000000);
-	
-	gettimeofday(&tv1, NULL);	
-
-	ft::map<int, int> mymap;
-
-	for(int i = 0; i < 50000000; ++i)
-	{
-		mymap.insert(ft::pair<const int, int>(i, i));
-	}
-	gettimeofday(&tv2, NULL);
-	std::cout << "insert ->" << (tv2.tv_sec * 1000000 + tv2.tv_usec) - (tv1.tv_sec * 1000000 + tv1.tv_usec) << std::endl;
-
-	mymap[n] = 42;
-	gettimeofday(&tv1, NULL);	
-	std::cout << "find -> " << n << " - " << (tv1.tv_sec * 1000000 + tv1.tv_usec) - (tv2.tv_sec * 1000000 + tv2.tv_usec) << std::endl;
 
 	return (0);
 

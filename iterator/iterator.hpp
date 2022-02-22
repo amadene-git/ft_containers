@@ -1,7 +1,7 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
-#include "utils.hpp"
+#include "../utils/utils.hpp"
 
 namespace ft 
 {
@@ -53,10 +53,6 @@ namespace ft
 		typedef 			const T&					reference;
 		typedef 			random_access_iterator_tag	iterator_category;
 	};
-
-
-
-
 
 }
 #endif

@@ -1,10 +1,12 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "../vector/iterator.hpp"
-#include "../vector/reverse_iterator.hpp"
+#include "../iterator/iterator.hpp"
+#include "../iterator/reverse_iterator.hpp"
 #include "../btree/BTree.hpp"
-#include "../btree/BTree_Iterator.hpp"
+#include "../iterator/BTree_Iterator.hpp"
+#include "../utils/utils.hpp"
+#include <memory>
 
 namespace ft
 {
@@ -15,7 +17,8 @@ namespace ft
     class map
     {
     public:
-		
+	
+	//MEMBER TYPE
 		typedef             Key                         key_type;
         typedef             T                           mapped_type;
 		typedef				Compare						key_compare;
@@ -72,25 +75,48 @@ namespace ft
 		{
 //			std::cout << "Map default constructor called\n";
 		};
-	// template <class InputIterator>
-	// map (InputIterator first, InputIterator last,
-    // const key_compare& comp = key_compare(),
-    // const allocator_type& alloc = allocator_type())
-	// :_alloc(alloc),
-	// _comp(comp),
-	// _btree(),
-	// _size(0)
-	// {
-	// 	while (first != last)
-	// 	{
-	// 		this->insert()
-	// 	}
-	// };
-/*
-copy (3)	
-map (const map& x);
-*/
 
+		template <class InputIterator>
+		map (InputIterator first, InputIterator last,
+		const key_compare& comp = key_compare(),
+		const allocator_type& alloc = allocator_type())
+		:_alloc(alloc),
+		_comp(comp),
+		_btree(),
+		_size(0)
+		{
+			while (first != last)
+			{
+				this->insert(first);
+				++first;
+			}
+		};
+
+		map (const map& x)
+		:_alloc(x.get_allocator()),
+		_comp(x.key_comp()),
+		_size(0)
+		{
+
+			iterator it = x.begin();
+
+			while (it != x.end())
+			{
+				this->insert(it);
+				++it;
+			}
+		};
+
+	map&	operator=(const map& x)
+	{
+		this->clear();
+		iterator it = x.begin();
+		while (it != x.end())
+		{
+			this->insert(it);
+			++it;
+		}
+	};
 
 //	CAPACITY ****************************
 
@@ -153,14 +179,46 @@ map (const map& x);
 		this->_btree.clear();
 		this->_size = 0;
 	};
-/*
-	(1)	
-     void erase (iterator position);
-(2)	
-size_type erase (const key_type& k);
-(3)	
-     void erase (iterator first, iterator last);
-*/
+	
+	void	erase(iterator position)
+	{
+		if (position == this->end())
+			return;
+		
+		Node<value_type>	*root = this->_btree.getRoot();
+		
+		while (position->first != root->data.first)
+		{
+			if (_comp(position->first, root->data.first))
+				root = root->left;
+			else if (_comp(root->data.first, position->first))
+				root = root->right;
+			else
+				break;
+		}
+
+		this->_btree.erase(root);
+		--this->_size;
+	};
+	size_type	erase(const key_type& k)
+	{
+		iterator	it = this->find(k);
+
+		if (it != this->end())
+		{
+			this->erase(it);
+			return (1);
+		}
+		return (0);
+	};
+    void	erase(iterator first, iterator last)
+	{
+		while (first != last)
+		{
+			this->erase(first);
+			++first;
+		}
+	};
 
 //	ITERATOR	*****************************
 	iterator		begin()			{ return(_btree.get_begin()); };

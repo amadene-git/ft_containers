@@ -1,7 +1,7 @@
 #ifndef BTREE_ITERATOR_HPP
 #define BTREE_ITERATOR_HPP
 
-#include "../vector/iterator.hpp"
+#include "iterator.hpp"
 
 namespace ft
 {

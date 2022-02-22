@@ -1,22 +1,10 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
-#include <iostream>
-#include <sstream>
 #include <stdio.h>
 #include <uchar.h>
 
 namespace ft
 {
-
-/*
-**iterator_traits**, 
-**reverse_iterator**,
-** enable_if, **
-**is_integral**,
-**equal**,
-**lexicographical compare,**
-*/
-
 	template	<bool Cond, class T = void>	struct enable_if {};
 	template	<class T> 					struct enable_if<true, T> {	typedef T type; };
 
@@ -126,15 +114,6 @@ namespace ft
 	}
 
 
-
-
-/*				
-std::pair,
-std::make_pair,
-**binary function**
-**less**
-*/
-
 	template <class T1, class T2> // <- A completer !!!
 	struct	pair
 	{
@@ -202,7 +181,6 @@ std::make_pair,
 
 
 
-
 	template <class Arg1, class Arg2, class Result>
 	struct	binary_function 
 	{
@@ -230,25 +208,14 @@ std::make_pair,
 	};
 
 
-	template <typename T>
-	std::string	to_str(T pouet)
-	{
-		std::stringstream ss;
+	// template <typename T>
+	// std::string	to_str(T pouet)
+	// {
+	// 	std::stringstream ss;
 
-		ss << pouet;
-		return (ss.str());
-	}
-
-
-
-
-
-
-
-
-
-
-
+	// 	ss << pouet;
+	// 	return (ss.str());
+	// }
 
 }
 #endif

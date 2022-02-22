@@ -1,17 +1,11 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-//A SUPPRIMER
-// #include <vector>
-// #include <type_traits>
-//
-
-#include <iostream>
 #include <memory>
 #include <algorithm>
-#include <iterator>
-#include "vector_iterator.hpp"
-#include "reverse_iterator.hpp"
+#include <stdexcept>
+#include "../iterator/vector_iterator.hpp"
+#include "../iterator/reverse_iterator.hpp"
 
 namespace ft
 {
@@ -56,12 +50,19 @@ namespace ft
 		
 		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc),
-		_ptr(_alloc.allocate(n)),
-		_size(n),
+		// _ptr(_alloc.allocate(n)),
+		_size(0),
 		_capacity(n)
 		{
 			// std::cout << "Vector Fill constructor called ->" << this << std::endl;			
-			std::fill_n(_ptr, n, val);
+			this->_ptr = _alloc.allocate(n);
+			
+			while (_size < n)
+			{
+				_alloc.construct(_ptr + _size, val);
+				++_size;
+			}
+
 		};
 
 		template <class InputIterator>
@@ -145,7 +146,9 @@ namespace ft
 			{
 				pointer		tmp = _alloc.allocate(n);
 								
-				std::copy(this->begin(), this->end(), tmp);
+				for (size_type i = 0; i < _size ; i++)
+					_alloc.construct(tmp + i, *(_ptr + i));
+				
 
 				for (size_type i = 0; i < _size; i++)
 					_alloc.destroy(_ptr + i);
@@ -230,34 +233,29 @@ namespace ft
 
 		iterator	insert(iterator position, const value_type& val)
 		{
-			iterator		it = this->begin();
-			size_type		n = 0;
-			difference_type	k = 0;
-
-			while (it != position)
-			{
-				++it;
-				++n;
-			}				
-
-			if (_capacity == _size)
-				this->reserve(_capacity * 2);
-			k = static_cast<difference_type>(_size);
-			it = this->begin();
+			difference_type	pos = position - this->begin();
 			
-			while (k > static_cast<difference_type>(n))
+			if (_capacity == _size)
 			{
-				it[k + 1] = it[k];
-				--k;
+				if (_capacity)
+					this->reserve(_capacity * 2);
+				else
+					this->reserve(1);
+				position = _ptr + pos;
 			}
-			it[k] = val;
+		
+			for (difference_type i = _size; i > pos; i--)
+				*(_ptr + i) = *(_ptr + (i - 1));
+			
+			this->_alloc.construct(this->_ptr + pos, val);
 			++_size;
-			return (it + k);
+
+			return (this->begin() + pos);
 		};
 		void	insert(iterator position, size_type n, const value_type& val)
 		{
 			if (n > _alloc.max_size())
-				throw (std::length_error("ft::vector::fill_insert"));
+				throw (std::length_error("cannot create ft::vector larger than max_size()"));
 		
 			difference_type	i = position - this->begin();
 			difference_type	j = difference_type(_size);
@@ -279,87 +277,67 @@ namespace ft
 				throw (std::length_error("cannot create ft::vector larger than max_size()"));
 
 			difference_type	diff = last - first;	
-			iterator		it = this->begin();
-			difference_type	i = 0;
-			difference_type	k = 0;
-
-			while (it != position)
+			difference_type	pos = position - this->begin();
+			
+			if (!_size)
+				this->reserve(size_type(diff));
+			else
+				while (_size + static_cast<size_type>(diff) > _capacity)
+					this->reserve(_capacity * 2);
+			
+			position = _ptr + pos; 
+			iterator	it = this->end() - 1;
+		
+			while (it >= position)
 			{
-				++it;
-				++i;
-			}				
-
-			while (_size + static_cast<size_type>(diff) > _capacity)
-				this->reserve(_size *2);
-			k = static_cast<difference_type>(_size) + diff;
-			it = this->begin();
-			while (k > i)
-			{
-				_ptr[k] = _ptr[k - diff];
-				--k;
+				*(it + diff) = *it;
+				--it;
 			}
 
+			while (first != last)
+			{
+				this->_alloc.construct(this->_ptr + pos, *first);
+				++first;
+				++pos;
+			}
 			_size += static_cast<size_type>(diff);
-			i = -1;
-			while (diff--)
-				it[k + diff] = first[++i];
 		};
 
 		iterator	erase(iterator position)
 		{
-			iterator		it = this->begin();
-			difference_type	n = 0;
-			difference_type	k = 0;
+			if (position == this->end())
+				return (this->end());
+			
+			difference_type	pos = position - this->begin();			
 
-			while (it != position)
-			{
-				++it;
-				++n;
-			}				
-
-			k = static_cast<difference_type>(_size);
-			it = this->begin();
-
-			while (k > n)
-			{
-				it[n] = it[n + 1];
-				++n;
-			}
-			--_size;
-			_alloc.destroy(_ptr + _size);
-			return (position);	
+			while (++position != this->end())
+				*(position - 1) = *(position);
+			
+			--this->_size;
+			this->_alloc.destroy(_ptr + this->_size);
+			
+			return (this->_ptr + pos);	
 		};
 		iterator	erase(iterator first, iterator last)
 		{
-			difference_type	diff = last - first;	
-			iterator		it = this->begin();
-			difference_type	i = 0;
-			difference_type	k = 0;
+			difference_type	diff = (last - first);
 
-			while (it != first)
-			{
-				++it;
-				++i;
-			}				
+			while (++last != this->end())
+				*(last - diff) = *last;
 
-			k = static_cast<difference_type>(_size) - diff;
-			it = this->begin();
-			while (k > i)
+			while (--diff)
 			{
-				it[i] = it[i + diff];
-				++i;
+				this->_alloc.destroy(_ptr + this->_size - 1);
+				--this->_size;
 			}
-			while (i < static_cast<difference_type>(_size))
-				_alloc.destroy(_ptr + i++ - 1);
-			_size -= static_cast<size_type>(diff);
 			return (first);
 		};
 
 
 
 //		ITERATOR
-		iterator 		begin() 		{ return (_ptr); };
-		const_iterator	begin() const	{ return (_ptr); };
+		iterator 		begin() 		{ return (this->_ptr); };
+		const_iterator	begin() const	{ return (this->_ptr); };
 		
 		iterator		end()
 		{

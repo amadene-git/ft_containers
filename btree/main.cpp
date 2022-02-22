@@ -150,7 +150,7 @@ void	check_parent(Node<T> *root)
 
 #include "../vector/utils.hpp"
 #include "BTree_Iterator.hpp"
-#define N 10
+#define N 20
 
 #include <sys/time.h>
 
@@ -172,7 +172,7 @@ int main()
 	ft::pair<BTree< ft::pair<const int, int>, ft::less<const int> >::iterator, bool> pr;
 
 	
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < 30; i++)
 	{
 
 		btree.insert_AVL(ft::pair<const int, int>(i, i));
@@ -185,17 +185,23 @@ int main()
 	
 
 
-	ft::print_btree(btree.getRoot());
+	ft::print_btree(btree.getRoot(), 0, 0, 3);
 
 
-	// btree.erase(btree.getRoot()->right->right->right);
+	btree.erase(btree.getRoot()->right);
 	std::cout << "***********************************************************************************************" << std::endl;
-	ft::print_btree(btree.getRoot());
+	ft::print_btree(btree.getRoot(), 0, 0, 3);
 	
-	// std::cout << std::endl << btree.getRoot()->data.first << std::endl;
+	std::cout << btree.getRoot()->right->data.first << std::endl;
+	std::cout << btree.getRoot()->right->left->data.first << std::endl;
+	
 	// std::cout << btree.getRoot()->right->data.first << std::endl;
 
-	// ft::print_btree(btree.getRoot());
+
+	// BTree<ft::pair<const int,int>, ft::less<const int> >::iterator it = btree.get_begin();
+
+	// while (it != btree.get_end())
+	// 	std::cout << (it++)->first << std::endl;
 
 
 }
