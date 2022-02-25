@@ -1,7 +1,7 @@
 NAME = out
 
 CC = clang++
-CC_FLAGS =  -g -Wall -Wextra -Werror  -std=c++98 -Wfatal-errors -Wpedantic -Wconversion -Wshadow
+CC_FLAGS =  -g -Wall -Wextra -Werror  -std=c++98 #-Wfatal-errors -Wpedantic -Wconversion -Wshadow
 
 SRCS = main.cpp 
 

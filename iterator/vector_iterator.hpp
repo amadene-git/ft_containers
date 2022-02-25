@@ -46,6 +46,7 @@ namespace ft
 			bool	operator==(Vector_Iterator const &rhs) 	const	{ return (_ptr == rhs._ptr); };
 			bool	operator!=(Vector_Iterator const &rhs) 	const	{ return (_ptr != rhs._ptr); };
 	
+			
 			//INCREMENT & DECREMENT
 			Vector_Iterator	&operator++()
 			{
@@ -92,12 +93,105 @@ namespace ft
 			//OVERLOAD CONST
 			operator Vector_Iterator<const T> () const { return (Vector_Iterator<const T>(this->_ptr)); };
 		
+			pointer base() const
+            { return (this->_ptr); }
+
 		private :
 			pointer	_ptr;
 	};
 //	OVERLOAD  n + it
 template <typename T>
 	Vector_Iterator<T> operator+(int i, const Vector_Iterator<T> &rhs) { return (rhs + i); }
+
+template <typename T, typename P>
+	Vector_Iterator<T> operator+(int i, const Vector_Iterator<P> &rhs) { return (rhs + i); }
+
+
+//**************** != *************************
+
+			template <typename T>
+    		bool	operator!=(const ft::Vector_Iterator<T> lhs,
+    		          const ft::Vector_Iterator<T> rhs)
+    		{
+    		    return (lhs.base() != rhs.base());
+    		}
+    		template<typename T_L, typename T_R>
+    		bool	operator!=(const ft::Vector_Iterator<T_L> lhs,
+    		          const ft::Vector_Iterator<T_R> rhs)
+    		{
+    		    return (lhs.base() != rhs.base());
+    		}
+
+//*************** == *****************************
+			template <typename T>
+    		bool	operator==(const ft::Vector_Iterator<T> lhs,
+    		          const ft::Vector_Iterator<T> rhs)
+    		{
+    		    return (lhs.base() == rhs.base());
+    		}
+    		template<typename T_L, typename T_R>
+    		bool	operator==(const ft::Vector_Iterator<T_L> lhs,
+    		          const ft::Vector_Iterator<T_R> rhs)
+    		{
+    		    return (lhs.base() == rhs.base());
+    		}
+
+//************* > *******************************			
+			template <typename T>
+    		bool	operator>(const ft::Vector_Iterator<T> lhs,
+    		          const ft::Vector_Iterator<T> rhs)
+    		{
+    		    return (lhs.base() > rhs.base());
+    		}
+    		template<typename T_L, typename T_R>
+    		bool	operator>(const ft::Vector_Iterator<T_L> lhs,
+    		          const ft::Vector_Iterator<T_R> rhs)
+    		{
+    		    return (lhs.base() > rhs.base());
+    		}
+
+//***************** >= ******************************
+			template <typename T>
+    		bool	operator>=(const ft::Vector_Iterator<T> lhs,
+    		          const ft::Vector_Iterator<T> rhs)
+    		{
+    		    return (lhs.base() >= rhs.base());
+    		}
+    		template<typename T_L, typename T_R>
+    		bool	operator>=(const ft::Vector_Iterator<T_L> lhs,
+    		          const ft::Vector_Iterator<T_R> rhs)
+    		{
+    		    return (lhs.base() >= rhs.base());
+    		}
+
+//**************** < *********************************
+			template <typename T>
+    		bool	operator<(const ft::Vector_Iterator<T> lhs,
+    		          const ft::Vector_Iterator<T> rhs)
+    		{
+    		    return (lhs.base() < rhs.base());
+    		}
+    		template<typename T_L, typename T_R>
+    		bool	operator<(const ft::Vector_Iterator<T_L> lhs,
+    		          const ft::Vector_Iterator<T_R> rhs)
+    		{
+    		    return (lhs.base() < rhs.base());
+    		}
+
+//********************** <= **************************
+			template <typename T>
+    		bool	operator<=(const ft::Vector_Iterator<T> lhs,
+    		          const ft::Vector_Iterator<T> rhs)
+    		{
+    		    return (lhs.base() <= rhs.base());
+    		}
+    		template<typename T_L, typename T_R>
+    		bool	operator<=(const ft::Vector_Iterator<T_L> lhs,
+    		          const ft::Vector_Iterator<T_R> rhs)
+    		{
+    		    return (lhs.base() <= rhs.base());
+    		}
+
 
 }
 

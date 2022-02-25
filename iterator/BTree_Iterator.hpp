@@ -21,6 +21,7 @@ namespace ft
 
 
 			BTree_Iterator(void) {  };
+
 			BTree_Iterator(BTree_Iterator const &src)
 			{
 				this->_node 	= src._node;
@@ -83,7 +84,6 @@ namespace ft
 					this->_node = this->_node->prev;
 				return (temp);
 			};
-			// operator BTree_Iterator<T> () const { return (this->_ptr); };
 
 		// private :
 			T		*_node;
@@ -181,6 +181,9 @@ namespace ft
 		// private :
 			T		*_node;
 	};
+
+
+	
 
 }
 

@@ -10,6 +10,7 @@
 
 namespace ft
 {
+	
     template <	class Key,
            		class T,
            		class Compare = ft::less<Key>,
@@ -57,7 +58,7 @@ namespace ft
 
 
 		typedef typename	ft::iterator_traits<iterator>::difference_type		difference_type;
-        typedef    			size_t												size_type;// <- A vérifier !
+        typedef    			size_t												size_type;
 
 		~map()
 		{
@@ -82,12 +83,12 @@ namespace ft
 		const allocator_type& alloc = allocator_type())
 		:_alloc(alloc),
 		_comp(comp),
-		_btree(),
-		_size(0)
+		_size(0),
+		_btree()
 		{
 			while (first != last)
 			{
-				this->insert(first);
+				this->insert(*first);
 				++first;
 			}
 		};
@@ -97,32 +98,21 @@ namespace ft
 		_comp(x.key_comp()),
 		_size(0)
 		{
-
-			iterator it = x.begin();
-
-			while (it != x.end())
-			{
-				this->insert(it);
-				++it;
-			}
+			this->insert(x.begin(), x.end());
 		};
 
-	map&	operator=(const map& x)
-	{
-		this->clear();
-		iterator it = x.begin();
-		while (it != x.end())
+		map&	operator=(const map& x)
 		{
-			this->insert(it);
-			++it;
-		}
-	};
+			this->clear();
+			this->insert(x.begin(), x.end());
+			return (*this);
+		};
 
 //	CAPACITY ****************************
 
 	bool		empty() const		{ return (!_size); };
 	size_type	size() const		{ return (_size); };
-	size_type	max_size() const	{ return (allocator_int().max_size() / 10); };// <- c'est temporaire hein... et surtout degueulasse 
+	size_type	max_size() const	{ return (std::allocator< ft::Alloc_Node<value_type> >().max_size()); };// <- c'est temporaire hein... et surtout degueulasse 
 
 //	MODIFIERS
 
@@ -148,7 +138,7 @@ namespace ft
 		ft::pair<iterator, bool> pr;
 		while (first != last)
 		{
-			this->_size  += this->insert(ft::make_pair(first->first, first->second)).second;
+			this->insert(ft::make_pair(first->first, first->second));
 			++first;
 		}
 	};
@@ -178,6 +168,7 @@ namespace ft
 	{
 		this->_btree.clear();
 		this->_size = 0;
+		this->_btree.set_begin(this->_btree.get_end());
 	};
 	
 	void	erase(iterator position)
@@ -343,7 +334,7 @@ namespace ft
 	};
 	const_iterator	upper_bound(const key_type& k) const
 	{
-		iterator	it = lower_bound(k);
+		const_iterator	it = lower_bound(k);
 
 		if (it == this->end() || _comp(k, it->first))
 			return (it);
@@ -386,9 +377,50 @@ namespace ft
 
     };
 
+	template <class Key, class T, class Compare, class Alloc>
+	bool	operator==(const map<Key,T,Compare,Alloc>& lhs,
+                    	const map<Key,T,Compare,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+	template <class Key, class T, class Compare, class Alloc>
+	bool	operator!=(const map<Key,T,Compare,Alloc>& lhs,
+                    	const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return (!(lhs == rhs));
+	}
+	template <class Key, class T, class Compare, class Alloc>
+	bool	operator<(const map<Key,T,Compare,Alloc>& lhs,
+                    	const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+	template <class Key, class T, class Compare, class Alloc>
+	bool	operator<=(const map<Key,T,Compare,Alloc>& lhs,
+                    	const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return (!(rhs < lhs));
+	}
+	template <class Key, class T, class Compare, class Alloc>
+	bool	operator>(const map<Key,T,Compare,Alloc>& lhs,
+                    	const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return (rhs < lhs);
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool	operator>=(const map<Key,T,Compare,Alloc>& lhs,
+                    	const map<Key,T,Compare,Alloc>& rhs)
+	{
+		return (!(rhs > lhs));
+	}
 
 
 }
+
+
 
 
 

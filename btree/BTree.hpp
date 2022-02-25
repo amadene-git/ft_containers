@@ -9,6 +9,28 @@
 namespace ft
 {
 
+	enum _Rb_tree_color { _S_red = false, _S_black = true };
+
+	template <class T>
+	class Alloc_Node
+	{
+	public:
+		
+		typedef	 T	value_type;
+
+		Alloc_Node()
+		{};
+		
+		~Alloc_Node(void)
+		{};
+		
+		T				data;
+		Alloc_Node<T>	*left;
+		Alloc_Node<T>	*right;
+		Alloc_Node<T>	*parent;
+		_Rb_tree_color	color;
+	};
+
 	template <class T>
 	class Node
 	{
@@ -68,9 +90,14 @@ namespace ft
 	{
 	public:
 
+
+
+
+
+
 		typedef 			T												value_type;	
 		typedef typename	ft::Node<value_type>							node_type;
-		typedef	typename	Alloc::size_type								size_type;
+		typedef				size_t											size_type;
 	
 		typedef	typename	ft::BTree_Iterator< node_type, Compare >		iterator;
 		typedef	typename	ft::BTree_const_Iterator< node_type, Compare >	const_iterator;
@@ -154,6 +181,7 @@ namespace ft
 				clear_rec(root->left);
 			if (root->right)
 				clear_rec(root->right);
+			_alloc.destroy(root);
 			_alloc.deallocate(root, 1);
 		};
 
@@ -173,6 +201,22 @@ namespace ft
 					root.prev = root.left;
 					if (!root.left->prev)
 						_begin = root.left;
+					else
+						root.left->prev->next = root.left;					
+					
+					// if (value.second == "bunny")
+					// {
+					// 	std::cout << "HERE ********************************" << std::endl;
+					// 	std::cout << "parent " << root.data.second << std::endl;
+					// 	std::cout << "parent->prev :" << root.prev->data.second << "; parent->next :" << root.next->data.second << std::endl;
+						
+					// 	std::cout << "root :" << root.left->data.second << std::endl;
+					// 	std::cout << "root->prev :" << root.left->prev->data.second << "; root->next :" << root.left->next->data.second << std::endl;
+						
+					// 	std::cout << "prev :" << root.left->prev->data.second << std::endl;
+					// 	std::cout << "prev->prev :" << root.left->prev->prev->data.second << "; prev->next :" << root.left->prev->next->data.second << std::endl;
+					
+					// }
 			
 					return (ft::make_pair<iterator, bool> (root.left, true));
 				}
@@ -190,7 +234,8 @@ namespace ft
 				
 					if (root.next == this->_end)
 						this->_end->prev = root.right;
-					
+					else
+						root.next->prev = root.right;
 					root.next = root.right;
 				
 					return (ft::make_pair<iterator, bool>(root.right, true));
@@ -218,6 +263,8 @@ namespace ft
 				this->_end->prev = *_root;
 				return (ft::make_pair<iterator, bool>(*_root, true));
 			}
+
+			
 
 			return (insert_AVL_1(value, **_root));
 		};
@@ -463,6 +510,14 @@ namespace ft
 			return;
 		};
 		
+
+			typedef typename std::allocator< ft::Node<T> >  node_alloc;
+
+			size_type max_size() const
+			{ 
+				return (node_alloc().max_size());
+			};
+
 
 
 	private:

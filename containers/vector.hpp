@@ -322,10 +322,16 @@ namespace ft
 		{
 			difference_type	diff = (last - first);
 
-			while (++last != this->end())
-				*(last - diff) = *last;
 
-			while (--diff)
+			for (int i = 0; first + i != last; ++i)
+				_alloc.destroy(_ptr + i + (first - this->begin()));
+
+			while (last != this->end())
+			{
+				*(last - diff) = *last;
+				++last;
+			}
+			while (diff--)
 			{
 				this->_alloc.destroy(_ptr + this->_size - 1);
 				--this->_size;
