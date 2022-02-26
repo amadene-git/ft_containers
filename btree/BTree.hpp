@@ -271,7 +271,7 @@ namespace ft
 
 		void	left_rotate(node_type *root)
 		{
-			if (!root)
+			if (!root || !root->right)
 				return;
 
 			// node_type 	*ptrA = root;
@@ -298,7 +298,7 @@ namespace ft
 		};
 		void	right_rotate(node_type *root)
 		{
-			if (!root)
+			if (!root || !root->left)
 				return;
 
 			// node_type 	*ptrA = root;
@@ -311,11 +311,13 @@ namespace ft
 				root->parent->left = (root->parent->left == root) ? ptrB : root->parent->left;
 				root->parent->right = (root->parent->right == root) ? ptrB : root->parent->right;
 			}
+
 			root->left = ptrB->right;
 			ptrB->right = root;
 
 			if (root->left)
 				root->left->parent = root;
+
 			ptrB->parent = root->parent;
 			root->parent = ptrB;
 
@@ -348,7 +350,7 @@ namespace ft
 				{
 					
 					tmp = root;
-					while (tmp->parent)
+					while (tmp && tmp->parent)
 					{
 						tmp->parent->l -= (tmp->parent->left == tmp) ? 1 : 0;
 						tmp->parent->r -= (tmp->parent->right == tmp) ? 1 : 0;
@@ -374,7 +376,7 @@ namespace ft
 			else if (root->left && !root->right)//a corriger mettre en dessous de root->left && root->right
 			{
 				tmp = root;
-				while (tmp->parent)
+				while (tmp && tmp->parent)
 				{
 					tmp->parent->l -= (tmp->parent->left == tmp) ? 1 : 0;
 					tmp->parent->r -= (tmp->parent->right == tmp) ? 1 : 0;
@@ -397,7 +399,8 @@ namespace ft
 				}
 				else
 					*_root = root->left;
-				root->left->parent = root->parent;
+				if (root && root->left)
+				    root->left->parent = root->parent;
 
 				_alloc.deallocate(root, 1);
 
@@ -405,7 +408,7 @@ namespace ft
 			else if (!root->left && root->right)//a corriger mettre en dessous de root->left && root->right
 			{
 				tmp = root;
-				while (tmp->parent)
+				while (tmp && tmp->parent)
 				{
 					tmp->parent->l -= (tmp->parent->left == tmp) ? 1 : 0;
 					tmp->parent->r -= (tmp->parent->right == tmp) ? 1 : 0;
@@ -428,6 +431,8 @@ namespace ft
 				}
 				else
 					*_root = root->right;
+				
+				if (root && root->right)
 				root->right->parent = root->parent;
 
 				_alloc.deallocate(root, 1);
@@ -475,7 +480,7 @@ namespace ft
 				tmp->l = root->l;
 				tmp->r = root->r - 1;
 
-				while (elem->parent)
+				while (elem && elem->parent)
 				{
 					elem->parent->l -= (elem->parent->left == elem) ? 1 : 0;
 					elem->parent->r -= (elem->parent->right == elem) ? 1 : 0;

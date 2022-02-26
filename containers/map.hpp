@@ -178,7 +178,7 @@ namespace ft
 		
 		Node<value_type>	*root = this->_btree.getRoot();
 		
-		while (position->first != root->data.first)
+		while (root && position->first != root->data.first)
 		{
 			if (_comp(position->first, root->data.first))
 				root = root->left;
@@ -219,10 +219,10 @@ namespace ft
 	const_iterator	end() const		{ return (const_iterator(_btree.get_end())); };
 
 	reverse_iterator		rbegin()			{ return(reverse_iterator(this->end())); };
-	const_reverse_iterator	rbegin()	const	{ return(reverse_iterator(this->end())); };
+	const_reverse_iterator	rbegin()	const	{ return(const_reverse_iterator(this->end())); };
 
 	reverse_iterator		rend() 				{ return(reverse_iterator(this->begin())); };
-	const_reverse_iterator	rend() 		const	{ return(reverse_iterator(this->begin())); };
+	const_reverse_iterator	rend() 		const	{ return(const_reverse_iterator(this->begin())); };
 
 
 //	ACCES *************************************
@@ -278,6 +278,9 @@ namespace ft
 
 	iterator	lower_bound(const key_type& k)
 	{
+		if (this->empty())
+			return (this->end());
+		
 		if (_comp((--this->end())->first, k))
 			return (this->end());
 		
@@ -294,11 +297,11 @@ namespace ft
 			else
 				break;
 		}
-		while (_comp(root->data.first, k))
+		while (root && _comp(root->data.first, k))
 			root = root->parent;
-		
-		return (root);
-
+		if (root)
+			return (root);
+		return (this->end());
 	};
 	const_iterator	lower_bound(const key_type& k) const
 	{

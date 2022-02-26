@@ -1,9 +1,12 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
+
+
 #include <memory>
 #include <algorithm>
 #include <stdexcept>
+#include "../utils/utils.hpp"
 #include "../iterator/vector_iterator.hpp"
 #include "../iterator/reverse_iterator.hpp"
 
@@ -44,17 +47,13 @@ namespace ft
 		_ptr(NULL),
 		_size(0),
 		_capacity(0)
-		{
-			// std::cout << "Vector Default constructor called ->" << this << std::endl;
-		};
+		{};
 		
 		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc),
-		// _ptr(_alloc.allocate(n)),
 		_size(0),
 		_capacity(n)
 		{
-			// std::cout << "Vector Fill constructor called ->" << this << std::endl;			
 			this->_ptr = _alloc.allocate(n);
 			
 			while (_size < n)
@@ -99,7 +98,6 @@ namespace ft
 
 		~vector()
 		{
-			// std::cout << "Vector Default destructor called ->" << this << std::endl;			
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_ptr + i);
 			_alloc.deallocate(_ptr, _size);
@@ -244,7 +242,7 @@ namespace ft
 				position = _ptr + pos;
 			}
 		
-			for (difference_type i = _size; i > pos; i--)
+			for (difference_type i = difference_type(_size); i > pos; i--)
 				*(_ptr + i) = *(_ptr + (i - 1));
 			
 			this->_alloc.construct(this->_ptr + pos, val);
@@ -273,7 +271,7 @@ namespace ft
 		void insert (iterator position, InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
 		{
-			if (static_cast<size_type>(ft::distance<InputIterator>(first, last)) > _alloc.max_size())
+			if (size_type(ft::distance<InputIterator>(first, last)) > _alloc.max_size())
 				throw (std::length_error("cannot create ft::vector larger than max_size()"));
 
 			difference_type	diff = ft::distance<InputIterator>(first, last);	
@@ -364,7 +362,7 @@ namespace ft
 		};
 		const_reverse_iterator	rbegin() const
 		{
-			return (reverse_iterator(this->end()));
+			return (const_reverse_iterator(this->end()));
 		};
 
 		reverse_iterator		rend()
@@ -373,7 +371,7 @@ namespace ft
 		};
 		const_reverse_iterator	rend() const
 		{
-			return (reverse_iterator( this->begin() ));
+			return (const_reverse_iterator( this->begin() ));
 		};
 
 

@@ -12,9 +12,9 @@ namespace ft
 	struct bidirectional_iterator_tag : public forward_iterator_tag { };
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 	
-	template<class T>	struct	is_random_acces_iterator	:	false_type {};
-	template<>			struct	is_random_acces_iterator<std::random_access_iterator_tag>	:	true_type {};
-	template<>			struct	is_random_acces_iterator<random_access_iterator_tag>	:	true_type {};
+	template<class T>	struct	is_random_acces_iterator	:	ft::false_type {};
+	template<>			struct	is_random_acces_iterator<std::random_access_iterator_tag>	:	ft::true_type {};
+	template<>			struct	is_random_acces_iterator<random_access_iterator_tag>	:	ft::true_type {};
 
 	template <	class Category, class T, class Distance = __gnu_cxx::ptrdiff_t, 
 				class Pointer = T*, class Reference = T& >
@@ -62,7 +62,7 @@ namespace ft
 	template<class InputIterator>
 	typename iterator_traits<InputIterator>::difference_type
     distance(InputIterator first, InputIterator last,
-	typename ft::enable_if<!ft::is_random_acces_iterator<typename InputIterator::iterator_category>::value, typename InputIterator::iterator_category>::type* = NULL)
+	typename ft::enable_if<!ft::is_random_acces_iterator<typename InputIterator::iterator_category>::value, typename InputIterator::iterator_category>::type* = ft::u_nullptr)
 	{
 		typename iterator_traits<InputIterator>::difference_type	n = 0;
 		
@@ -77,7 +77,7 @@ namespace ft
 	template<class InputIterator>
 	typename iterator_traits<InputIterator>::difference_type
     distance(InputIterator first, InputIterator last,
-	typename ft::enable_if<ft::is_random_acces_iterator<typename InputIterator::iterator_category>::value, typename InputIterator::iterator_category>::type* = NULL)
+	typename ft::enable_if<ft::is_random_acces_iterator<typename InputIterator::iterator_category>::value, typename InputIterator::iterator_category>::type* = ft::u_nullptr)
 	{
 		return (last - first);		
 	}

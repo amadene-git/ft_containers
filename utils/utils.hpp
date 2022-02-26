@@ -1,8 +1,8 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include <stdio.h>
-#include <uchar.h>
+// #include <stdio.h>
+// #include <uchar.h>
 #include "../iterator/iterator.hpp"
 
 namespace ft
@@ -214,6 +214,32 @@ namespace ft
 	template<class A, class B> struct is_same_type		: false_type {};
 	template <class T> struct is_same_type<T, T>		: true_type {};		
 
+	static class nullptr_t
+	{
+    public:
+        /*
+        ** @brief For conversion to any type
+        ** of null non-member pointer.
+        */
+        template<class T>
+        operator T*() const { return (0); }
+
+        /*
+        ** @brief For conversion to any type of null
+        ** member pointer.
+        */
+        template<class C, class T>
+        operator T C::*() const { return (0); }
+
+    private:
+        
+        /*
+        ** @brief It's imposible to get an address of
+        ** a nullptr.
+        */
+        void operator&() const;
+
+	} u_nullptr = {};
 
 }
 #endif
