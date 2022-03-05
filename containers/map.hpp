@@ -1,19 +1,22 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "../iterator/iterator.hpp"
 #include "../iterator/reverse_iterator.hpp"
-#include "../btree/BTree.hpp"
 #include "../iterator/BTree_Iterator.hpp"
-#include "../utils/utils.hpp"
-#include <memory>
+#include "../btree/BTree.hpp"
+#include "../include/equal.hpp"
+#include "../include/lexicographical_compare.hpp"
+
+
+#include <memory>//std::allocator
+#include <functional>//std::less
 
 namespace ft
 {
 	
     template <	class Key,
            		class T,
-           		class Compare = ft::less<Key>,
+           		class Compare = std::less<Key>,
            		class Alloc = std::allocator< ft::pair<const Key,T> > >
     class map
     {
@@ -31,7 +34,7 @@ namespace ft
         
    
    
-		class	value_compare : binary_function<value_type, value_type, bool>
+		class	value_compare : std::binary_function<value_type, value_type, bool>
 		{
 			friend class map;
 		protected:

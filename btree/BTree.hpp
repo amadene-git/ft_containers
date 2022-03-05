@@ -1,10 +1,9 @@
-#ifndef BTREE
-#define BTREE
+#ifndef BTREE_HPP
+#define BTREE_HPP
 
-#include <iostream>
-#include <exception>
-#include "../utils/utils.hpp"
 #include "../iterator/BTree_Iterator.hpp"
+#include "../include/pair.hpp"
+#include "../include/enable_if.hpp"
 
 namespace ft
 {
@@ -69,30 +68,10 @@ namespace ft
 		int		r;
 	};
 
-	class BTreeException : public std::exception
-	{
-	public:
-		BTreeException(const std::string msg) : _msg(msg) {};
- 		virtual ~BTreeException() throw() {return ;}
-	
-	private:
-		
-		virtual	const char * what () const throw () { return _msg.c_str(); };
-
-		const std::string _msg;
-
-	};
-	
-
-
 	template <class T, class Compare, class Alloc = std::allocator< Node<T> >, class AllocN = std::allocator< Node<T>* > >
 	class BTree
 	{
 	public:
-
-
-
-
 
 
 		typedef 			T												value_type;	
@@ -204,20 +183,6 @@ namespace ft
 					else
 						root.left->prev->next = root.left;					
 					
-					// if (value.second == "bunny")
-					// {
-					// 	std::cout << "HERE ********************************" << std::endl;
-					// 	std::cout << "parent " << root.data.second << std::endl;
-					// 	std::cout << "parent->prev :" << root.prev->data.second << "; parent->next :" << root.next->data.second << std::endl;
-						
-					// 	std::cout << "root :" << root.left->data.second << std::endl;
-					// 	std::cout << "root->prev :" << root.left->prev->data.second << "; root->next :" << root.left->next->data.second << std::endl;
-						
-					// 	std::cout << "prev :" << root.left->prev->data.second << std::endl;
-					// 	std::cout << "prev->prev :" << root.left->prev->prev->data.second << "; prev->next :" << root.left->prev->next->data.second << std::endl;
-					
-					// }
-			
 					return (ft::make_pair<iterator, bool> (root.left, true));
 				}
 
@@ -301,7 +266,6 @@ namespace ft
 			if (!root || !root->left)
 				return;
 
-			// node_type 	*ptrA = root;
 			node_type	*ptrB = root->left;
 
 			if (root == *(this->_root))
@@ -496,20 +460,8 @@ namespace ft
 					else
 						elem = elem->parent;
 				}
-				// std::cout << "l: " <<  elem->l << " ; r: " << elem->r << std::endl;
-				// if (elem->l - elem->r > 1)
-				// {
-				// 	this->right_rotate(elem);
-				// 	std::cout << "yo" << std::endl;
-				// }
-				// else if (elem->l - elem->r < -1)
-				// 	this->left_rotate(elem);
 				_alloc.deallocate(root, 1);
 				
-			}
-			else
-			{
-				std::cout << "other case" << std::endl;
 			}
 			
 			return;
@@ -536,64 +488,7 @@ namespace ft
 	};
 
 
-//BTREE UTILS *******************************************
-#define COUNT 20
 
-template <class T>
-void	print_btree(ft::Node<T> *root, int a = 0, int lvl = 0, int max = -1,
-typename ft::enable_if< ft::is_pair<T>::value, T >::type* = NULL)
-{
-	if (!root)
-	{
-		std::cout << "Oh NO !" << std::endl;
-		return;
-	}
-	
-	if (root->right && (lvl <= max || max == -1))
-		print_btree(root->right, 0, lvl + 1, max);
-	// else
-	// 	std::cout << std::endl;
-
-	for (int k = 1	; k < lvl; k++)
-		for (int i = 0; i < COUNT; i++)
-			std::cout << " ";
-	if (lvl)
-	{
-		for (int i = 0; i < COUNT - 5; i++)
-			std::cout << " ";
-		if (a)
-			std::cout << "\\";
-		else
-			std::cout << "/";
-	}
-	if (root->parent)
-		std::cout << "<" << root->parent->data.first;
-	else
-		std::cout << "<nil";
-	std::cout << "---<" << lvl << ">";
-	std::cout << root->l << "-" << root->r;
-	std::cout << "[" << root->data.first << ", " << root->data.second << "]";
-	// std::cout << "\033[0m";
-	
-	
-	if (root->right && root->left)
-		std::cout << " <";
-	else
-	{
-		if (root->right)
-			std::cout << " /";
-		if (root->left)
-			std::cout << " \\";
-	}
-	std::cout << std::endl;
-
-	if (root->left && (lvl <= max || max == -1))
-		print_btree(root->left, 1, lvl + 1, max);
-	// else
-	// 	std::cout << std::endl;
-
-
-}
 
 }
 
