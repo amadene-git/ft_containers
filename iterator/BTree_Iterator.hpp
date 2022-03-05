@@ -85,7 +85,7 @@ namespace ft
 				return (temp);
 			};
 
-		private :
+
 			T		*_node;
 	};
 
@@ -175,7 +175,8 @@ namespace ft
 				return (temp);
 			};
 			
-		private :
+
+
 			T		*_node;
 	};
 
