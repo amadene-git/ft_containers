@@ -1,21 +1,23 @@
 #ifndef VECTOR_ITERATOR_HPP
 #define VECTOR_ITERATOR_HPP
 
-#include "iterator.hpp"
+
+#include <iterator>//std::random_access_iterator_tag
+// #include "../include/iterator.hpp"//std::iterator
 
 namespace ft
 {
 
 	template <class T>
-	class Vector_Iterator : public ft::iterator<random_access_iterator_tag, T>
+	class Vector_Iterator : public std::iterator<std::random_access_iterator_tag, T>
 	{
 	public :
-			typedef typename	ft::iterator<random_access_iterator_tag, T>::reference	reference;// T&
-			typedef typename	ft::iterator<random_access_iterator_tag, T>::pointer	pointer;// T*
+			typedef typename	std::iterator<std::random_access_iterator_tag, T>::reference			reference;
+			typedef typename	std::iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 
-			typedef	typename	ft::iterator<random_access_iterator_tag, T>::difference_type	difference_type;
-			typedef	typename	ft::iterator<random_access_iterator_tag, T>::value_type			value_type;
-			typedef	typename	ft::iterator<random_access_iterator_tag, T>::iterator_category	iterator_category;
+			typedef	typename	std::iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
+			typedef	typename	std::iterator<std::random_access_iterator_tag, T>::value_type		value_type;
+			typedef	typename	std::iterator<std::random_access_iterator_tag, T>::iterator_category	iterator_category;
 
 			Vector_Iterator(void) { _ptr = NULL; };
 			Vector_Iterator(pointer	src) { _ptr = src; };

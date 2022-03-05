@@ -2,21 +2,22 @@
 #define BTREE_ITERATOR_HPP
 
 #include "iterator.hpp"
+#include <iterator>//std::bidirectional_iteartor_tag
 
 namespace ft
 {
 
 	template <class T, class Cond>
-	class BTree_Iterator : public ft::iterator<bidirectional_iterator_tag, T>
+	class BTree_Iterator : public ft::iterator<std::bidirectional_iterator_tag, T>
 	{
 	public :
 
 			typedef	typename	T::value_type value_type;
 
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::difference_type	difference_type;
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::reference			reference;
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::pointer			pointer;
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::difference_type		difference_type;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::reference			reference;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::pointer				pointer;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
 
 
 
@@ -85,21 +86,21 @@ namespace ft
 				return (temp);
 			};
 
-		// private :
+		private :
 			T		*_node;
 	};
 
 	template <class T, class Cond>
-	class BTree_const_Iterator : public ft::iterator<bidirectional_iterator_tag, T>
+	class BTree_const_Iterator : public ft::iterator<std::bidirectional_iterator_tag, T>
 	{
 	public :
 
 			typedef	typename	T::value_type const value_type;
 
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::difference_type	difference_type;
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::reference			reference;
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::pointer			pointer;
-			typedef	typename	ft::iterator<bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::difference_type		difference_type;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::reference			reference;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::pointer				pointer;
+			typedef	typename	ft::iterator<std::bidirectional_iterator_tag, value_type>::iterator_category	iterator_category;
 
 
 
@@ -175,15 +176,9 @@ namespace ft
 				return (temp);
 			};
 			
-
-			// operator BTree_const_Iterator<T> () const { return (this->_ptr); };
-
-		// private :
+		private :
 			T		*_node;
 	};
-
-
-	
 
 }
 
