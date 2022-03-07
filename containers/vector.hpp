@@ -5,7 +5,7 @@
 # include <algorithm>
 # include <stdexcept>
 # include <iterator>//std::distance
-
+# include <typeinfo>//typeid
 
 # include "../iterator/vector_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
@@ -52,7 +52,8 @@ namespace ft
 		_ptr(NULL),
 		_size(0),
 		_capacity(0)
-		{};
+		{
+		};
 		
 		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc),
@@ -60,7 +61,6 @@ namespace ft
 		_capacity(n)
 		{
 			this->_ptr = _alloc.allocate(n);
-			
 			while (_size < n)
 			{
 				_alloc.construct(_ptr + _size, val);
@@ -82,19 +82,26 @@ namespace ft
 
 		vector(const vector& x)
 		: _alloc(x._alloc), 
-		_ptr(NULL),
-		_size(0),
-		 _capacity(0)
+		_size(x._size),
+		 _capacity(x._capacity)
 		{
-			*this = x;
+			this->_ptr = this->_alloc.allocate(this->_size);
+			for (size_type i = 0; i < x._size; ++i)
+				_alloc.construct(_ptr + i, *(x._ptr + i));
 		};
 		
 		vector& operator=(const vector& rhs)
 		{
 			if (&rhs != this)
 			{
+				// this->_capacity = x._capacity;
 				this->clear();
 				this->resize(rhs._size);
+				// for (difference_type i = 0; i < difference_type(_size); ++i)
+				// {
+				// 	_alloc.destroy(_ptr + i);
+				// 	_alloc.construct(_ptr + i, *(rhs.begin() + i));
+				// }
 				std::copy(rhs.begin(), rhs.end(), _ptr);
 			}
 			return (*this);
@@ -103,9 +110,13 @@ namespace ft
 
 		~vector()
 		{
+			// std::cout << "ptr = " << _ptr << std::endl;
+			// std::cout << "size = " << _size << std::endl;
+			// std::cout << "capacity = " << _capacity << std::endl;
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_ptr + i);
 			_alloc.deallocate(_ptr, _size);
+			_ptr = NULL;
 		};
 
 
@@ -144,7 +155,7 @@ namespace ft
 		void	reserve(size_type n)
 		{
 			if (n > _alloc.max_size())
-				throw (std::length_error("cannot create ft::vector larger than max_size()"));
+				throw (std::length_error("vector::reserve"));
 			if (n > _capacity)
 			{
 				pointer		tmp = _alloc.allocate(n);
@@ -156,6 +167,7 @@ namespace ft
 				for (size_type i = 0; i < _size; i++)
 					_alloc.destroy(_ptr + i);
 				_alloc.deallocate(_ptr, _capacity);
+				_ptr = NULL;
 				
 				_ptr = tmp;
 				_capacity = n;
@@ -165,18 +177,21 @@ namespace ft
 		void resize(size_type n, value_type val = value_type())//if it has to reallocate storage, all iterators, pointers and references related to this container are also invalidated.
 		{
 			if (n > _alloc.max_size())
-					throw (std::length_error("cannot create ft::vector larger than max_size()"));
+					throw (std::length_error("vector::resize"));
 		
 			while (n < _size)
 				_alloc.destroy(_ptr + --_size);
-			
+
 			if (n && !_capacity)
 				this->reserve(n);
 			if (n > _capacity)
 				while (n > _capacity)
 					this->reserve(_capacity * 2);
+			
 
-			std::fill_n(_ptr + _size, n - _size, val);
+			for (size_type i = 0; i < n - _size; ++i)
+				_alloc.construct(_ptr + _size + i, val);
+
 
 			_size = n;
 		};
@@ -194,17 +209,14 @@ namespace ft
 
 		void	swap(vector& x)
 		{
-			allocator_type	tmp_alloc = _alloc;
 			pointer			tmp_ptr = _ptr;
 			size_type		tmp_size = _size;
 			size_type		tmp_capacity = _capacity;
 
-			_alloc = x._alloc;
 			_ptr = x._ptr;
 			_size = x._size;
 			_capacity = x._capacity;
 
-			x._alloc = tmp_alloc;
 			x._ptr = tmp_ptr;
 			x._size = tmp_size;
 			x._capacity = tmp_capacity;
@@ -248,8 +260,11 @@ namespace ft
 			}
 		
 			for (difference_type i = difference_type(_size); i > pos; i--)
-				*(_ptr + i) = *(_ptr + (i - 1));
-			
+			{	
+				if (i != difference_type(_size))
+					_alloc.destroy(_ptr + i);
+				_alloc.construct(_ptr + i, *(_ptr + (i - 1)));
+			}
 			this->_alloc.construct(this->_ptr + pos, val);
 			++_size;
 
@@ -263,13 +278,23 @@ namespace ft
 			difference_type	i = position - this->begin();
 			difference_type	j = difference_type(_size);
 
+
 			if (_size + n > _capacity)
 				this->reserve(_size + n);
 			
+			size_type k = 0;
 			while (i <= --j)
+			{
 				_alloc.construct(_ptr + j + n, *(_ptr + j));
+				_alloc.destroy(_ptr + j);
+				
+				++k;
+			}
 			for (difference_type a = 0; a < difference_type(n); a++)
+			{
+				// _alloc.destroy(_ptr + i + a);
 				_alloc.construct(_ptr + i + a, val);
+			}
 			_size += n;
 		};
 		template <class InputIterator>
@@ -281,27 +306,34 @@ namespace ft
 
 			difference_type	diff = std::distance<InputIterator>(first, last);	
 			difference_type	pos = position - this->begin();
-			
+			difference_type destroy = this->end() - position;
+
+		
 			if (!_size)
 				this->reserve(size_type(diff));
 			else
 				while (_size + static_cast<size_type>(diff) > _capacity)
 					this->reserve(_capacity * 2);
 			
+
+
 			position = _ptr + pos; 
 			iterator	it = this->end() - 1;
-		
+
 			while (it >= position)
 			{
-				*(it + diff) = *it;
+				_alloc.construct((it.base() + diff), *it);
 				--it;
 			}
 
 			while (first != last)
 			{
+				if (destroy > 0)
+					this->_alloc.destroy(this->_ptr + pos);
 				this->_alloc.construct(this->_ptr + pos, *first);
 				++first;
 				++pos;
+				--destroy;
 			}
 			_size += static_cast<size_type>(diff);
 		};
@@ -314,8 +346,10 @@ namespace ft
 			difference_type	pos = position - this->begin();			
 
 			while (++position != this->end())
-				*(position - 1) = *(position);
-			
+			{
+				_alloc.destroy(position.base() - 1);
+				_alloc.construct((position.base() - 1), *(position));
+			}
 			--this->_size;
 			this->_alloc.destroy(_ptr + this->_size);
 			
@@ -331,7 +365,10 @@ namespace ft
 
 			while (last != this->end())
 			{
-				*(last - diff) = *last;
+				// if (last - diff != first)
+					_alloc.destroy(last.base() - diff);
+				_alloc.construct(last.base() - diff, *(last.base()));
+				// *(last - diff) = *last;
 				++last;
 			}
 			while (diff--)
