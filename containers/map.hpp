@@ -146,6 +146,8 @@ namespace ft
 		}
 	};
 	
+	
+	
 	void	swap(map& x)
 	{
 		Node<value_type> *tmp = this->_btree.getRoot();
@@ -209,8 +211,7 @@ namespace ft
 	{
 		while (first != last)
 		{
-			this->erase(first);
-			++first;
+			this->erase(first++);
 		}
 	};
 
@@ -422,6 +423,14 @@ namespace ft
 	{
 		return (!(rhs > lhs));
 	}
+
+	template<class Key, class T, class Compare, class Alloc>
+	void	swap(map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y)
+	{
+		x.swap(y);
+	}
+
+
 
 
 }
