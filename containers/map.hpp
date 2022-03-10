@@ -27,7 +27,6 @@ namespace ft
         typedef             T                           mapped_type;
 		typedef				Compare						key_compare;
 	    typedef				Alloc						allocator_type;
-		typedef 			std::allocator< int >		allocator_int;// <- chelou A corriger !!!
 
        
         typedef typename    ft::pair<const key_type, mapped_type>			value_type;                         		
@@ -123,7 +122,6 @@ namespace ft
 	{
 		ft::pair<iterator, bool> pr = _btree.insert_AVL(val);
 		_size += pr.second;
-		// this->end()->first = size;
 		
 		return (ft::make_pair<iterator, bool>(pr.first, pr.second));
 	};

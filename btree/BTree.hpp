@@ -5,6 +5,11 @@
 #include "../include/pair.hpp"
 #include "../include/enable_if.hpp"
 
+
+#include <iostream>
+#define COUNT 20
+
+
 namespace ft
 {
 
@@ -72,6 +77,61 @@ namespace ft
 	class BTree
 	{
 	public:
+
+		void	print_btree(ft::Node<T> *root = NULL, int a = 0, int lvl = 0, int max = -1)
+		{
+			if (!root)
+			{
+				root = getRoot();
+				if (!root)
+					return;
+			std::cerr << "******************************************************************************************************************" << std::endl;
+
+			}
+
+			if (root->right && (lvl <= max || max == -1))
+				print_btree(root->right, 0, lvl + 1, max);
+
+			for (int k = 1	; k < lvl; k++)
+				for (int i = 0; i < COUNT; i++)
+					std::cerr << " ";
+			if (lvl)
+			{
+				for (int i = 0; i < COUNT - 5; i++)
+					std::cerr << " ";
+				if (a)
+					std::cerr << "\\";
+				else
+					std::cerr << "/";
+			}
+			if (root->parent)
+				std::cerr << "<" << root->parent->data.first;
+			else
+				std::cerr << "<nil";
+			std::cerr << "---<" << lvl << ">";
+			std::cerr << root->l << "-" << root->r;
+			std::cerr << "[" << root->data.first << ", " << root->data.second << "]";
+			// std::cerr << "\033[0m";
+
+
+			if (root->right && root->left)
+				std::cerr << " <";
+			else
+			{
+				if (root->right)
+					std::cerr << " /";
+				if (root->left)
+					std::cerr << " \\";
+			}
+			std::cerr << std::endl;
+
+			if (root->left && (lvl <= max || max == -1))
+				print_btree(root->left, 1, lvl + 1, max);
+			if (root == getRoot())
+			std::cerr << "******************************************************************************************************************" << std::endl << std::endl;
+
+
+		}
 
 
 		typedef 			T												value_type;	
@@ -217,6 +277,24 @@ namespace ft
 			return (pr);
 		};
 
+		node_type	*find(value_type& k)
+		{
+			Node<value_type>	*root = getRoot();
+
+			while (root)
+			{
+				if (_comp(k.first, root->data.first))
+					root = root->left;
+				else if (_comp(root->data.first, k.first))
+					root = root->right;
+				else
+					break;
+			}
+			if (root)
+				return (root);
+			return (NULL);
+		};
+		
 		ft::pair<iterator, bool>	insert_AVL(value_type value)
 		{
 			if (*_root == NULL)
@@ -229,9 +307,15 @@ namespace ft
 				return (ft::make_pair<iterator, bool>(*_root, true));
 			}
 
+			ft::pair<iterator, bool> pr;
+			node_type *root = find(value);
 			
-
-			return (insert_AVL_1(value, **_root));
+			if (!root)
+				pr = insert_AVL_1(value, **_root);
+			else
+				pr = ft::make_pair(root, false);
+			
+			return (pr);
 		};
 
 		void	left_rotate(node_type *root)
@@ -239,7 +323,6 @@ namespace ft
 			if (!root || !root->right)
 				return;
 
-			// node_type 	*ptrA = root;
 			node_type	*ptrB = root->right;
 
 			if (root == *(this->_root))
@@ -263,6 +346,7 @@ namespace ft
 		};
 		void	right_rotate(node_type *root)
 		{
+
 			if (!root || !root->left)
 				return;
 
@@ -294,6 +378,7 @@ namespace ft
 		{
 			node_type	*tmp;
 			
+
 			if (!root)
 				return;
 			if (root != this->_begin)
@@ -304,6 +389,7 @@ namespace ft
 			root->next->prev = root->prev;
 			if (!root->left && !root->right)
 			{
+			
 				if (root == *(this->_root))
 				{
 					_alloc.deallocate(root, 1);
@@ -334,11 +420,119 @@ namespace ft
 					root->parent->left 	= (root->parent->left == root) ? NULL : root->parent->left;
 					root->parent->right = (root->parent->right == root) ? NULL : root->parent->right;
 
-					_alloc.deallocate(root, 1);
+					
+					tmp = getRoot();
+				
+					if (tmp->right)
+						tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
+					if (tmp->left)
+						tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
+
+
 				}
 			}
-			else if (root->left && !root->right)//a corriger mettre en dessous de root->left && root->right
+			else if (root->left && root->right)
 			{
+
+				tmp = root->right;
+				node_type	*elem;
+
+
+				if (tmp->left)
+				{
+					while (tmp->left)
+						tmp = tmp->left;
+
+					if (tmp->right)
+						tmp->right->parent = tmp->parent;
+					tmp->parent->left = tmp->right;
+					
+					if (root->right)
+						root->right->parent = tmp;
+					tmp->right = root->right;
+
+					elem = tmp->parent;
+		
+				}
+				else//l'element a supprimer est le parent de tmp					
+					elem = tmp;
+
+				if (root == *_root)
+				{
+
+					*_root = tmp;
+					if (tmp->parent)
+						--tmp->parent->l;
+
+				}
+				else if (elem != tmp)//cas generique
+				{
+
+					if (root->parent->left == root)
+						root->parent->left 	= tmp;
+
+					if (root->parent->right == root)
+						root->parent->right = tmp;
+
+					tmp->l = root->l;
+					tmp->r = root->r - 1;
+					--tmp->parent->l;
+				
+				}
+				else//l'element a supprimer est le parent de tmp
+				{
+					
+					if (root->parent->left == root)
+						root->parent->left 	= tmp;
+
+					if (root->parent->right == root)
+						root->parent->right = tmp;
+
+					tmp->l = root->l;
+					tmp->r = root->r - 1;
+				
+				}
+
+				tmp->parent = root->parent;
+
+				if (root->left)
+					root->left->parent = tmp;
+
+				tmp->left = root->left;
+
+				
+				while (elem && elem->parent)
+				{
+
+					if (elem->parent->left == elem)
+						elem->parent->l = elem->l + elem->r + 1;
+					if (elem->parent->right == elem)
+						elem->parent->r = elem->l + elem->r + 1;
+					
+					
+					if (elem->l - elem->r > 1 || elem->l - elem->r < -1)
+					{
+						if (elem->l - elem->r > 1)
+							this->right_rotate(elem);
+						else if (elem->l - elem->r < -1)
+							this->left_rotate(elem);
+						elem = elem->parent->parent;
+					}
+					else
+						elem = elem->parent;
+				}
+
+				elem = getRoot();
+				if (elem->right)
+					elem->r = (!elem->right->l && !elem->right->r) ? 1 : elem->right->l + elem->right->r + 1;
+				if (elem->left)
+					elem->l = (!elem->left->l && !elem->left->r) ? 1 : elem->left->l + elem->left->r + 1;
+
+				
+			}
+			else if (root->left)//a corriger mettre en dessous de root->left && root->right
+			{
+
 				tmp = root;
 				while (tmp && tmp->parent)
 				{
@@ -356,6 +550,7 @@ namespace ft
 					else
 						tmp = tmp->parent;
 				}
+				
 				if (root->parent)
 				{
 					root->parent->left 	= (root->parent->left == root) ? root->left : root->parent->left;
@@ -366,11 +561,19 @@ namespace ft
 				if (root && root->left)
 				    root->left->parent = root->parent;
 
-				_alloc.deallocate(root, 1);
+	
+				tmp = getRoot();
+				
+				if (tmp->right)
+					tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
+				if (tmp->left)
+					tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
+			
 
 			}
-			else if (!root->left && root->right)//a corriger mettre en dessous de root->left && root->right
+			else if (root->right)//a corriger mettre en dessous de root->left && root->right
 			{
+
 				tmp = root;
 				while (tmp && tmp->parent)
 				{
@@ -398,71 +601,19 @@ namespace ft
 				
 				if (root && root->right)
 				root->right->parent = root->parent;
-
-				_alloc.deallocate(root, 1);
-
-			}
-			else if (root->left && root->right)
-			{
-				tmp = root->right;
-				node_type	*elem;
-
-
+		
+				
+				tmp = getRoot();
+				
+				if (tmp->right)
+					tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
 				if (tmp->left)
-				{
-					while (tmp->left)
-						tmp = tmp->left;
+					tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
 
-					if (tmp->right)
-						tmp->right->parent = tmp->parent;
-					tmp->parent->left = tmp->right;
-					
-					if (root->right)
-						root->right->parent = tmp;
-					tmp->right = root->right;
-
-					elem = tmp->parent;
-				}
-				else
-					elem = tmp;
-			
-				
-				if (root == *_root)
-					*_root = tmp;
-				else
-				{
-					root->parent->left 	= (root->parent->left == root) ? tmp : root->parent->left;
-					root->parent->right = (root->parent->right == root) ? tmp : root->parent->right;
-				}
-				tmp->parent = root->parent;
-
-				if (root->left)
-					root->left->parent = tmp;
-
-				tmp->left = root->left;
-
-				tmp->l = root->l;
-				tmp->r = root->r - 1;
-
-				while (elem && elem->parent)
-				{
-					elem->parent->l -= (elem->parent->left == elem) ? 1 : 0;
-					elem->parent->r -= (elem->parent->right == elem) ? 1 : 0;
-					
-					if (elem->l - elem->r > 1 || elem->l - elem->r < -1)
-					{
-						if (elem->l - elem->r > 1)
-							this->right_rotate(elem);
-						else if (elem->l - elem->r < -1)
-							this->left_rotate(elem);
-						elem = elem->parent->parent;
-					}
-					else
-						elem = elem->parent;
-				}
-				_alloc.deallocate(root, 1);
-				
 			}
+
+			
+			_alloc.deallocate(root, 1);
 			
 			return;
 		};

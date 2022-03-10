@@ -34,7 +34,7 @@ DEP_TEST		= $(OBJS_TEST:%.o=%.d)
 
 
 
-test					:  ${NAME_TEST}
+test					:  re ${NAME_TEST}
 							@./${NAME}	> ft.ret
 							@./${NAME_TEST}	> std.ret
 							diff ft.ret std.ret
