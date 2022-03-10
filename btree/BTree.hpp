@@ -224,19 +224,117 @@ namespace ft
 			_alloc.deallocate(root, 1);
 		};
 
-		ft::pair<iterator, bool>	insert_AVL_1(value_type &value, node_type &root)
+		ft::pair<iterator, bool>	insert_AVL_ite(value_type &value, node_type *root)
 		{
 			ft::pair<iterator, bool>	pr;
+
+			while (root)
+			{
+				if (_comp(value.first, root->data.first))
+				{
+					if (root->left)
+					{
+						root = root->left;
+						continue;
+					}
+					else
+					{
+						root->left = _alloc.allocate(1);
+						_alloc.construct(root->left, node_type(value, root, root->prev, root));
+						
+						root->prev = root->left;
+						if (!root->left->prev)
+							_begin = root->left;
+						else
+							root->left->prev->next = root->left;
+						
+						root = root->left;
+						pr = ft::make_pair(root, true);
+						break;
+					}
+				}
+				else if (_comp(root->data.first, value.first))
+				{
+					if (root->right)
+					{
+						root = root->right;
+						continue;
+					}
+					else
+					{
+						root->right = _alloc.allocate(1);
+						_alloc.construct(root->right, node_type(value, root, root, root->next));
+					
+						if (root->next == this->_end)
+							this->_end->prev = root->right;
+						else
+							root->next->prev = root->right;
+						root->next = root->right;
+						
+						root = root->right;
+						pr = ft::make_pair(root, true);
+						break;
+					}
+				}
+				else
+				{
+					pr = ft::make_pair(root, false);
+					break;
+				}
+			}
+			while (root != *_root)
+			{
+			
+				if (root->parent->left == root && pr.second == true)
+					++root->parent->l;
+				else if (root->parent->right == root && pr.second == true)
+					++root->parent->r;
+		
+				if (root->l - root->r > 1)
+				{
+					this->right_rotate(root);
+					if (root->parent && root->parent->parent)
+						root = root->parent->parent;
+				}
+				else if (root->l - root->r < -1)
+				{
+					this->left_rotate(root);
+					if (root->parent && root->parent->parent)
+						root = root->parent->parent;
+				}
+				else
+					root = root->parent;
+			}
+			if (root->left)
+				root->l = root->left->l + root->left->r + 1;
+			if (root->right)
+				root->r = root->right->l + root->right->r + 1;
+	
+			if (root->l - root->r > 1)
+				this->right_rotate(root);
+			else if (root->l - root->r < -1)
+				this->left_rotate(root);
+	
+			return (pr);
+		}
+		
+		ft::pair<iterator, bool>	insert_AVL_rec(value_type &value, node_type &root)
+		{
+			ft::pair<iterator, bool>	pr;
+
+		
+
 
 			if (_comp(value.first, root.data.first))
 			{
 				++root.l;
 				if (root.left)
-					pr = insert_AVL_1(value, *root.left);
+					pr = insert_AVL_rec(value, *root.left);
 				else
 				{
 					root.left = _alloc.allocate(1);
 					_alloc.construct(root.left, node_type(value, &root, root.prev, &root));
+					
 					root.prev = root.left;
 					if (!root.left->prev)
 						_begin = root.left;
@@ -251,7 +349,7 @@ namespace ft
 			{
 				++root.r;
 				if (root.right && root.next != this->_end)
-					pr = insert_AVL_1(value, *root.right);
+					pr = insert_AVL_rec(value, *root.right);
 				else
 				{
 					root.right = _alloc.allocate(1);
@@ -311,11 +409,13 @@ namespace ft
 			node_type *root = find(value);
 			
 			if (!root)
-				pr = insert_AVL_1(value, **_root);
+				pr = insert_AVL_rec(value, **_root);
 			else
 				pr = ft::make_pair(root, false);
-			
+
 			return (pr);
+			
+			return (insert_AVL_ite(value, *_root));
 		};
 
 		void	left_rotate(node_type *root)

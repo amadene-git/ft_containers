@@ -15,6 +15,12 @@
 # include "../include/is_integral.hpp"
 
 
+template<class T>
+T*	get_addr(T &ref)
+{
+	return (&ref);
+}
+
 namespace ft
 {
 	template <class T, class Allocator = std::allocator<T> >
@@ -60,7 +66,7 @@ namespace ft
 		_size(0),
 		_capacity(n)
 		{
-			this->_ptr = _alloc.allocate(n);
+			this->_ptr = _alloc.allocate(_capacity);
 			while (_size < n)
 			{
 				_alloc.construct(_ptr + _size, val);
@@ -73,11 +79,17 @@ namespace ft
         vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
 		: _alloc(alloc), 
-		_ptr(_alloc.allocate(size_type(std::distance<InputIterator>(first, last)))),
 		_size(size_type(std::distance<InputIterator>(first, last))),
 		 _capacity(_size)
 		{
-			std::copy(first, last, _ptr);
+			size_type i = 0;
+			this->_ptr = _alloc.allocate(_capacity);
+			
+			while (i < _size)
+			{
+				_alloc.construct(_ptr + i, *first++);
+				++i;
+			}
 		};
 
 		vector(const vector& x)
@@ -85,7 +97,7 @@ namespace ft
 		_size(x._size),
 		 _capacity(x._capacity)
 		{
-			this->_ptr = this->_alloc.allocate(this->_size);
+			this->_ptr = this->_alloc.allocate(this->_capacity);
 			for (size_type i = 0; i < x._size; ++i)
 				_alloc.construct(_ptr + i, *(x._ptr + i));
 		};
@@ -94,15 +106,14 @@ namespace ft
 		{
 			if (&rhs != this)
 			{
-				// this->_capacity = x._capacity;
 				this->clear();
 				this->resize(rhs._size);
-				// for (difference_type i = 0; i < difference_type(_size); ++i)
-				// {
-				// 	_alloc.destroy(_ptr + i);
-				// 	_alloc.construct(_ptr + i, *(rhs.begin() + i));
-				// }
-				std::copy(rhs.begin(), rhs.end(), _ptr);
+				for (difference_type i = 0; i < difference_type(_size); ++i)
+				{
+					_alloc.destroy(_ptr + i);
+					_alloc.construct(_ptr + i, *(rhs.begin() + i));
+				}
+				// std::copy(rhs.begin(), rhs.end(), _ptr);
 			}
 			return (*this);
 		};
@@ -113,9 +124,10 @@ namespace ft
 			// std::cout << "ptr = " << _ptr << std::endl;
 			// std::cout << "size = " << _size << std::endl;
 			// std::cout << "capacity = " << _capacity << std::endl;
-			for (size_type i = 0; i < _size; i++)
+			
+			for (size_type i = 0; i < _size && _ptr; i++)
 				_alloc.destroy(_ptr + i);
-			_alloc.deallocate(_ptr, _size);
+			_alloc.deallocate(_ptr, _capacity);
 			_ptr = NULL;
 		};
 
@@ -160,14 +172,13 @@ namespace ft
 			{
 				pointer		tmp = _alloc.allocate(n);
 								
-				for (size_type i = 0; i < _size ; i++)
+				for (size_type i = 0; i < _size ; ++i)
 					_alloc.construct(tmp + i, *(_ptr + i));
 				
 
-				for (size_type i = 0; i < _size; i++)
+				for (size_type i = 0; i < _size; ++i)
 					_alloc.destroy(_ptr + i);
 				_alloc.deallocate(_ptr, _capacity);
-				_ptr = NULL;
 				
 				_ptr = tmp;
 				_capacity = n;
@@ -178,7 +189,7 @@ namespace ft
 		{
 			if (n > _alloc.max_size())
 					throw (std::length_error("vector::resize"));
-		
+
 			while (n < _size)
 				_alloc.destroy(_ptr + --_size);
 
@@ -187,11 +198,9 @@ namespace ft
 			if (n > _capacity)
 				while (n > _capacity)
 					this->reserve(_capacity * 2);
-			
 
 			for (size_type i = 0; i < n - _size; ++i)
 				_alloc.construct(_ptr + _size + i, val);
-
 
 			_size = n;
 		};
@@ -259,7 +268,7 @@ namespace ft
 				position = _ptr + pos;
 			}
 		
-			for (difference_type i = difference_type(_size); i > pos; i--)
+			for (difference_type i = difference_type(_size); i > pos; --i)
 			{	
 				if (i != difference_type(_size))
 					_alloc.destroy(_ptr + i);
@@ -426,6 +435,9 @@ namespace ft
 		pointer			_ptr;
 		size_type		_size;
 		size_type		_capacity;
+
+
+		
 
 	};
 

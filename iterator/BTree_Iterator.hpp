@@ -30,14 +30,20 @@ namespace ft
 			{
 				this->_node 	= src;
 			};
+			
 			virtual ~BTree_Iterator(void) {};
+
+			pointer	base() const
+			{
+				return (&_node->data);
+			};
 			
 			//CLASSIC OVERLOAD
 			BTree_Iterator 	&operator=(BTree_Iterator const &rhs)
 			{
 				this->_node = rhs._node;
 				return (*this);
-			}
+			};
 
 			//OVERLOAD POINTER
 			reference	operator*(void) const 
@@ -179,6 +185,91 @@ namespace ft
 
 			T		*_node;
 	};
+
+//**************** != *************************
+
+			template <typename T, typename Cond>
+    		bool	operator!=(const ft::BTree_Iterator<T, Cond> lhs,
+    		          const ft::BTree_Iterator<T, Cond> rhs)
+    		{
+    		    return (lhs.base() != rhs.base());
+    		}
+    		template<typename T_L, typename T_R, typename Cond>
+    		bool	operator!=(const ft::BTree_Iterator<T_L, Cond> lhs,
+    		          const ft::BTree_Iterator<T_R, Cond> rhs)
+    		{
+    		    return (lhs.base() != rhs.base());
+    		}
+
+//*************** == *****************************
+			template <typename T, typename Cond>
+    		bool	operator==(const ft::BTree_Iterator<T, Cond> lhs,
+    		          const ft::BTree_Iterator<T, Cond> rhs)
+    		{
+    		    return (lhs.base() == rhs.base());
+    		}
+    		template<typename T_L, typename T_R, typename Cond>
+    		bool	operator==(const ft::BTree_Iterator<T_L, Cond> lhs,
+    		          const ft::BTree_Iterator<T_R, Cond> rhs)
+    		{
+    		    return (lhs.base() == rhs.base());
+    		}
+
+//************* > *******************************			
+			template <typename T, typename Cond>
+    		bool	operator>(const ft::BTree_Iterator<T, Cond> lhs,
+    		          const ft::BTree_Iterator<T, Cond> rhs)
+    		{
+    		    return (lhs.base() > rhs.base());
+    		}
+    		template<typename T_L, typename T_R, typename Cond>
+    		bool	operator>(const ft::BTree_Iterator<T_L, Cond> lhs,
+    		          const ft::BTree_Iterator<T_R, Cond> rhs)
+    		{
+    		    return (lhs.base() > rhs.base());
+    		}
+
+//***************** >= ******************************
+			template <typename T, typename Cond>
+    		bool	operator>=(const ft::BTree_Iterator<T, Cond> lhs,
+    		          const ft::BTree_Iterator<T, Cond> rhs)
+    		{
+    		    return (lhs.base() >= rhs.base());
+    		}
+    		template<typename T_L, typename T_R, typename Cond>
+    		bool	operator>=(const ft::BTree_Iterator<T_L, Cond> lhs,
+    		          const ft::BTree_Iterator<T_R, Cond> rhs)
+    		{
+    		    return (lhs.base() >= rhs.base());
+    		}
+
+//**************** < *********************************
+			template <typename T, typename Cond>
+    		bool	operator<(const ft::BTree_Iterator<T, Cond> lhs,
+    		          const ft::BTree_Iterator<T, Cond> rhs)
+    		{
+    		    return (lhs.base() < rhs.base());
+    		}
+    		template<typename T_L, typename T_R, typename Cond>
+    		bool	operator<(const ft::BTree_Iterator<T_L, Cond> lhs,
+    		          const ft::BTree_Iterator<T_R, Cond> rhs)
+    		{
+    		    return (lhs.base() < rhs.base());
+    		}
+
+//********************** <= **************************
+			template <typename T, typename Cond>
+    		bool	operator<=(const ft::BTree_Iterator<T, Cond> lhs,
+    		          const ft::BTree_Iterator<T, Cond> rhs)
+    		{
+    		    return (lhs.base() <= rhs.base());
+    		}
+    		template<typename T_L, typename T_R, typename Cond>
+    		bool	operator<=(const ft::BTree_Iterator<T_L, Cond> lhs,
+    		          const ft::BTree_Iterator<T_R, Cond> rhs)
+    		{
+    		    return (lhs.base() <= rhs.base());
+    		}
 
 }
 
