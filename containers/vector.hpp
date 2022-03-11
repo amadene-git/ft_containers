@@ -113,7 +113,6 @@ namespace ft
 					_alloc.destroy(_ptr + i);
 					_alloc.construct(_ptr + i, *(rhs.begin() + i));
 				}
-				// std::copy(rhs.begin(), rhs.end(), _ptr);
 			}
 			return (*this);
 		};
@@ -185,7 +184,7 @@ namespace ft
 			}
 		};
 
-		void resize(size_type n, value_type val = value_type())//if it has to reallocate storage, all iterators, pointers and references related to this container are also invalidated.
+		void resize(size_type n, value_type val = value_type())
 		{
 			if (n > _alloc.max_size())
 					throw (std::length_error("vector::resize"));
@@ -246,7 +245,7 @@ namespace ft
 		
 		template<typename InputIterator>
         void assign(InputIterator first, InputIterator last,
-		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
         {
 			if (static_cast<size_type>(std::distance<InputIterator>(first, last)) > _alloc.max_size())
 				throw (std::length_error("cannot create ft::vector larger than max_size()"));
@@ -255,139 +254,88 @@ namespace ft
 				this->push_back(*first++);								
         };
 
-		iterator	insert(iterator position, const value_type& val)
-		{
-			difference_type	pos = position - this->begin();
-			
-			if (_capacity == _size)
-			{
-				if (_capacity)
-					this->reserve(_capacity * 2);
-				else
-					this->reserve(1);
-				position = _ptr + pos;
-			}
 		
-			for (difference_type i = difference_type(_size); i > pos; --i)
-			{	
-				if (i != difference_type(_size))
-					_alloc.destroy(_ptr + i);
-				_alloc.construct(_ptr + i, *(_ptr + (i - 1)));
-			}
-			this->_alloc.construct(this->_ptr + pos, val);
-			++_size;
-
-			return (this->begin() + pos);
-		};
-		void	insert(iterator position, size_type n, const value_type& val)
+		iterator insert(iterator position, const value_type &value)
 		{
-			if (n > _alloc.max_size())
-				throw (std::length_error("cannot create ft::vector larger than max_size()"));
-		
-			difference_type	i = position - this->begin();
-			difference_type	j = difference_type(_size);
-
-
-			if (_size + n > _capacity)
-				this->reserve(_size + n);
+			difference_type pos = position.base() - _ptr;
 			
-			size_type k = 0;
-			while (i <= --j)
-			{
-				_alloc.construct(_ptr + j + n, *(_ptr + j));
-				_alloc.destroy(_ptr + j);
-				
-				++k;
-			}
-			for (difference_type a = 0; a < difference_type(n); a++)
-			{
-				// _alloc.destroy(_ptr + i + a);
-				_alloc.construct(_ptr + i + a, val);
-			}
-			_size += n;
-		};
-		template <class InputIterator>
-		void insert (iterator position, InputIterator first, InputIterator last,
-		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
-		{
-			if (size_type(std::distance<InputIterator>(first, last)) > _alloc.max_size())
-				throw (std::length_error("cannot create ft::vector larger than max_size()"));
-
-			difference_type	diff = std::distance<InputIterator>(first, last);	
-			difference_type	pos = position - this->begin();
-			difference_type destroy = this->end() - position;
+			insert(position, 1, value);
+			
+			return (_ptr + pos);
+		}
 
 		
-			if (!_size)
-				this->reserve(size_type(diff));
-			else
-				while (_size + static_cast<size_type>(diff) > _capacity)
-					this->reserve(_capacity * 2);
-			
-
-
-			position = _ptr + pos; 
-			iterator	it = this->end() - 1;
-
-			while (it >= position)
-			{
-				_alloc.construct((it.base() + diff), *it);
-				--it;
-			}
-
-			while (first != last)
-			{
-				if (destroy > 0)
-					this->_alloc.destroy(this->_ptr + pos);
-				this->_alloc.construct(this->_ptr + pos, *first);
-				++first;
-				++pos;
-				--destroy;
-			}
-			_size += static_cast<size_type>(diff);
-		};
-
-		iterator	erase(iterator position)
+		void insert(iterator position, size_type count, const value_type &value)
 		{
-			if (position == this->end())
-				return (this->end());
+			difference_type pos = position.base() - _ptr;
 			
-			difference_type	pos = position - this->begin();			
+			if (!count)
+				return;
 
-			while (++position != this->end())
+			reserve(_size + size_type(count));
+
+			for (difference_type i = difference_type(_size) - 1; i >= pos; i--)
 			{
-				_alloc.destroy(position.base() - 1);
-				_alloc.construct((position.base() - 1), *(position));
+				_alloc.construct(_ptr + i + count, *(_ptr + i));
+				_alloc.destroy(_ptr + i);
 			}
-			--this->_size;
-			this->_alloc.destroy(_ptr + this->_size);
-			
-			return (this->_ptr + pos);	
-		};
-		iterator	erase(iterator first, iterator last)
+
+			for (difference_type i = pos; i < pos + difference_type(count); i++)
+				_alloc.construct(_ptr + i, value);
+
+			_size += count;
+		}
+
+		template <typename InputIterator>
+		void insert(iterator position, InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
 		{
-			difference_type	diff = (last - first);
+			difference_type pos = position.base() - _ptr;
+			difference_type diff = std::distance(first, last);
+			
+			if (!diff)
+				return;
+			
+			reserve(_size + size_type(diff));
 
-
-			for (int i = 0; first + i != last; ++i)
-				_alloc.destroy(_ptr + i + (first - this->begin()));
-
-			while (last != this->end())
+			for (difference_type i = difference_type(_size) - 1; i >= (difference_type)pos; --i)
 			{
-				// if (last - diff != first)
-					_alloc.destroy(last.base() - diff);
-				_alloc.construct(last.base() - diff, *(last.base()));
-				// *(last - diff) = *last;
-				++last;
+				_alloc.construct(_ptr + i + diff, *(_ptr + i));
+				_alloc.destroy(_ptr + i);
 			}
-			while (diff--)
+
+			for (InputIterator it = first; it != last; ++it)
+				_alloc.construct(_ptr + pos++, *it);
+
+			_size += size_type(diff);
+		}
+
+		iterator erase(iterator pos)
+		{
+			return (erase(pos, pos + 1));
+		}
+
+		iterator erase(iterator first, iterator last)
+		{
+			difference_type diff = last - first;
+			
+			if (diff <= 0)
+				return last;
+
+			difference_type pos = first.base() - _ptr;
+
+			for (difference_type i = pos; i < pos + diff; ++i)
+				_alloc.destroy(_ptr + i);
+
+			for (difference_type i = pos + diff; i < difference_type(_size); ++i)
 			{
-				this->_alloc.destroy(_ptr + this->_size - 1);
-				--this->_size;
+				_alloc.construct(_ptr + i - diff, *(_ptr + i));
+				_alloc.destroy(_ptr + i);
 			}
+
+			_size -= size_type(diff);
 			return (first);
-		};
-
+		}
 
 
 //		ITERATOR

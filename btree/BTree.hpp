@@ -630,7 +630,7 @@ namespace ft
 
 				
 			}
-			else if (root->left)//a corriger mettre en dessous de root->left && root->right
+			else if (root->left)
 			{
 
 				tmp = root;
@@ -671,7 +671,7 @@ namespace ft
 			
 
 			}
-			else if (root->right)//a corriger mettre en dessous de root->left && root->right
+			else if (root->right)
 			{
 
 				tmp = root;
