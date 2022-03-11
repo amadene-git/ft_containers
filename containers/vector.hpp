@@ -163,6 +163,7 @@ namespace ft
 		size_type	capacity() 	const	{ return (_capacity); };
 		bool		empty() 	const	{ return ((_size == 0) ? true : false); };
 
+
 		void	reserve(size_type n)
 		{
 			if (n > _alloc.max_size())
@@ -192,7 +193,7 @@ namespace ft
 			while (n < _size)
 				_alloc.destroy(_ptr + --_size);
 
-			if (n && !_capacity)
+			if ((n && !_capacity) || n >= _capacity * 2)
 				this->reserve(n);
 			if (n > _capacity)
 				while (n > _capacity)
@@ -271,7 +272,7 @@ namespace ft
 			
 			if (!count)
 				return;
-
+			
 			reserve(_size + size_type(count));
 
 			for (difference_type i = difference_type(_size) - 1; i >= pos; i--)

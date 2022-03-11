@@ -2,7 +2,7 @@ NAME = a.out
 
 CC = c++
 DEBUG_FLAG = -g -Wfatal-errors -Wpedantic -Wconversion -Wshadow
-CC_FLAGS = -Wall -Wextra -Werror  -std=c++98 -g  ${DEBUG_FLAG} #
+CC_FLAGS = -Wall -Wextra -Werror  -std=c++98 #${DEBUG_FLAG} 
 TEST_FLAGS = -D NAMESPACE=std
 
 
@@ -34,7 +34,7 @@ DEP_TEST		= $(OBJS_TEST:%.o=%.d)
 
 
 
-test					:   ${NAME_TEST}
+test					:   re ${NAME_TEST}
 							@./${NAME}	> ft.ret
 							@./${NAME_TEST}	> std.ret
 							diff ft.ret std.ret
