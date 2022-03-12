@@ -119,11 +119,7 @@ namespace ft
 
 
 		~vector()
-		{
-			// std::cout << "ptr = " << _ptr << std::endl;
-			// std::cout << "size = " << _size << std::endl;
-			// std::cout << "capacity = " << _capacity << std::endl;
-			
+		{			
 			for (size_type i = 0; i < _size && _ptr; i++)
 				_alloc.destroy(_ptr + i);
 			_alloc.deallocate(_ptr, _capacity);
@@ -384,10 +380,6 @@ namespace ft
 		pointer			_ptr;
 		size_type		_size;
 		size_type		_capacity;
-
-
-		
-
 	};
 
 //	RELATIONAL OPERATORS

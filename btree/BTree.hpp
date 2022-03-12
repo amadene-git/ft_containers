@@ -7,8 +7,11 @@
 
 
 #include <iostream>
+#include <string>
 #define COUNT 20
 
+int i = 0;
+int e = 0;
 
 namespace ft
 {
@@ -78,62 +81,6 @@ namespace ft
 	{
 	public:
 
-		void	print_btree(ft::Node<T> *root = NULL, int a = 0, int lvl = 0, int max = -1)
-		{
-			if (!root)
-			{
-				root = getRoot();
-				if (!root)
-					return;
-			std::cerr << "******************************************************************************************************************" << std::endl;
-
-			}
-
-			if (root->right && (lvl <= max || max == -1))
-				print_btree(root->right, 0, lvl + 1, max);
-
-			for (int k = 1	; k < lvl; k++)
-				for (int i = 0; i < COUNT; i++)
-					std::cerr << " ";
-			if (lvl)
-			{
-				for (int i = 0; i < COUNT - 5; i++)
-					std::cerr << " ";
-				if (a)
-					std::cerr << "\\";
-				else
-					std::cerr << "/";
-			}
-			if (root->parent)
-				std::cerr << "<" << root->parent->data.first;
-			else
-				std::cerr << "<nil";
-			std::cerr << "---<" << lvl << ">";
-			std::cerr << root->l << "-" << root->r;
-			std::cerr << "[" << root->data.first << ", " << root->data.second << "]";
-			// std::cerr << "\033[0m";
-
-
-			if (root->right && root->left)
-				std::cerr << " <";
-			else
-			{
-				if (root->right)
-					std::cerr << " /";
-				if (root->left)
-					std::cerr << " \\";
-			}
-			std::cerr << std::endl;
-
-			if (root->left && (lvl <= max || max == -1))
-				print_btree(root->left, 1, lvl + 1, max);
-			if (root == getRoot())
-			std::cerr << "******************************************************************************************************************" << std::endl << std::endl;
-
-
-		}
-
-
 		typedef 			T												value_type;	
 		typedef typename	ft::Node<value_type>							node_type;
 		typedef				size_t											size_type;
@@ -144,7 +91,6 @@ namespace ft
 		BTree(node_type *root = NULL, Alloc const &alloc = Alloc(), Compare const &comp = Compare())
 		: _alloc(alloc), _comp(comp)
 		{
-			// std::cout << "BTree default constructor called\n";
 			this->_root = _allocN.allocate(1);
 			*(this->_root) = root;
 
@@ -155,7 +101,6 @@ namespace ft
 
 		~BTree(void)
 		{
-			// std::cout << "BTree default destructor called" << std::endl;
 			this->clear();
 			_allocN.deallocate(_root, 1);
 			_alloc.deallocate(this->_end, 1);
@@ -170,34 +115,6 @@ namespace ft
 		node_type	*getRoot(void) const
 		{
 			return (*_root);
-		};
-
-		void	getHeight(int *size, node_type *root = NULL, int lvl = 1)
-		{
-			if (!root)
-				root = *_root;
-			if (!root)
-				return;
-			if (!lvl)
-				*size = 0;
-			if (root->left)
-				getHeight(size, root->left, lvl + 1);
-			if (root->right)
-				getHeight(size, root->right, lvl + 1);
-			*size = (lvl > *size) ? lvl : *size;
-		};
-		unsigned int	getSize(node_type *root = NULL, int lvl = 1)// temporaire hein...
-		{
-			if (!root)
-				root = *_root;
-			if (!root)
-				return (0);
-			
-			if (root->left)
-				lvl = getSize(root->left, lvl + 1);
-			if (root->right)
-				lvl = getSize(root->right, lvl + 1);
-			return (unsigned(lvl));
 		};
 
 		node_type	*get_begin()	const { return (_begin); };
@@ -322,8 +239,6 @@ namespace ft
 		{
 			ft::pair<iterator, bool>	pr;
 
-		
-
 
 			if (_comp(value.first, root.data.first))
 			{
@@ -392,6 +307,26 @@ namespace ft
 				return (root);
 			return (NULL);
 		};
+
+		// void	check_btree(node_type *root = NULL, std::string str = std::string())
+		// {
+		// 	if (!root)
+		// 	{
+		// 		root = getRoot();
+		// 		if (!root)
+		// 			return;
+		// 	}
+			
+		// 	if ((!root->right && root->r) || (root->right && root->r != root->right->l + root->right->r + 1))
+		// 		std::cout << "i =" << i << " e =" << e << " " << str << " -> "<< root->data.first <<std::endl;
+		// 	if ((!root->left && root->l) || (root->left && root->l != root->left->l + root->left->r + 1))
+		// 		std::cout << "i =" << i << " e =" << e << " " << str << " -> " << root->data.first << std::endl;
+			
+		// 	if (root->right)
+		// 		check_btree(root->right, str);
+		// 	if (root->left)
+		// 		check_btree(root->left, str);
+		// }
 		
 		ft::pair<iterator, bool>	insert_AVL(value_type value)
 		{
@@ -405,15 +340,15 @@ namespace ft
 				return (ft::make_pair<iterator, bool>(*_root, true));
 			}
 
-			ft::pair<iterator, bool> pr;
-			node_type *root = find(value);
+			// ft::pair<iterator, bool> pr;
+			// node_type *root = find(value);
 			
-			if (!root)
-				pr = insert_AVL_rec(value, **_root);
-			else
-				pr = ft::make_pair(root, false);
+			// if (!root)
+			// 	pr = insert_AVL_rec(value, **_root);
+			// else
+			// 	pr = ft::make_pair(root, false);
 
-			return (pr);
+			// return (pr);
 			
 			return (insert_AVL_ite(value, *_root));
 		};
@@ -446,7 +381,6 @@ namespace ft
 		};
 		void	right_rotate(node_type *root)
 		{
-
 			if (!root || !root->left)
 				return;
 
@@ -478,7 +412,6 @@ namespace ft
 		{
 			node_type	*tmp;
 			
-
 			if (!root)
 				return;
 			if (root != this->_begin)
@@ -489,7 +422,6 @@ namespace ft
 			root->next->prev = root->prev;
 			if (!root->left && !root->right)
 			{
-			
 				if (root == *(this->_root))
 				{
 					_alloc.deallocate(root, 1);
@@ -520,23 +452,13 @@ namespace ft
 					root->parent->left 	= (root->parent->left == root) ? NULL : root->parent->left;
 					root->parent->right = (root->parent->right == root) ? NULL : root->parent->right;
 
-					
-					tmp = getRoot();
-				
-					if (tmp->right)
-						tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
-					if (tmp->left)
-						tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
-
-
 				}
 			}
 			else if (root->left && root->right)
 			{
-
 				tmp = root->right;
-				node_type	*elem;
 
+				node_type	*elem;
 
 				if (tmp->left)
 				{
@@ -621,18 +543,9 @@ namespace ft
 					else
 						elem = elem->parent;
 				}
-
-				elem = getRoot();
-				if (elem->right)
-					elem->r = (!elem->right->l && !elem->right->r) ? 1 : elem->right->l + elem->right->r + 1;
-				if (elem->left)
-					elem->l = (!elem->left->l && !elem->left->r) ? 1 : elem->left->l + elem->left->r + 1;
-
-				
 			}
 			else if (root->left)
 			{
-
 				tmp = root;
 				while (tmp && tmp->parent)
 				{
@@ -658,22 +571,12 @@ namespace ft
 				}
 				else
 					*_root = root->left;
+
 				if (root && root->left)
 				    root->left->parent = root->parent;
-
-	
-				tmp = getRoot();
-				
-				if (tmp->right)
-					tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
-				if (tmp->left)
-					tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
-			
-
 			}
 			else if (root->right)
 			{
-
 				tmp = root;
 				while (tmp && tmp->parent)
 				{
@@ -700,32 +603,85 @@ namespace ft
 					*_root = root->right;
 				
 				if (root && root->right)
-				root->right->parent = root->parent;
-		
-				
-				tmp = getRoot();
-				
-				if (tmp->right)
-					tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
-				if (tmp->left)
-					tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
+					root->right->parent = root->parent;
 
 			}
 
+			tmp = getRoot();
 			
+			if (tmp->right)
+				tmp->r = (!tmp->right->l && !tmp->right->r) ? 1 : tmp->right->l + tmp->right->r + 1;
+			if (tmp->left)
+				tmp->l = (!tmp->left->l && !tmp->left->r) ? 1 : tmp->left->l + tmp->left->r + 1;
+
+			value_alloc v_alloc;
+
+			v_alloc.destroy(&root->data);
 			_alloc.deallocate(root, 1);
 			
 			return;
 		};
 		
+		typedef typename std::allocator< ft::Node<T> >  node_alloc;
+		typedef typename std::allocator< T >  value_alloc;
+	
+		size_type max_size() const
+		{ 
+			return (node_alloc().max_size());
+		};
+	
+		void	print_btree(ft::Node<T> *root = NULL, int a = 0, int lvl = 0, int max = -1)
+		{
+			if (!root)
+			{
+				root = getRoot();
+				if (!root)
+					return;
+			std::cerr << "******************************************************************************************************************" << std::endl;
 
-			typedef typename std::allocator< ft::Node<T> >  node_alloc;
+			}
 
-			size_type max_size() const
-			{ 
-				return (node_alloc().max_size());
-			};
+			if (root->right && (lvl <= max || max == -1))
+				print_btree(root->right, 0, lvl + 1, max);
 
+			for (int k = 1	; k < lvl; k++)
+				for (int i = 0; i < COUNT; i++)
+					std::cerr << " ";
+			if (lvl)
+			{
+				for (int i = 0; i < COUNT - 5; i++)
+					std::cerr << " ";
+				if (a)
+					std::cerr << "\\";
+				else
+					std::cerr << "/";
+			}
+			if (root->parent)
+				std::cerr << "<" << root->parent->data.first;
+			else
+				std::cerr << "<nil";
+			std::cerr << "---<" << lvl << ">";
+			std::cerr << root->l << "-" << root->r;
+			std::cerr << "[" << root->data.first << ", " << root->data.second << "]";
+
+			if (root->right && root->left)
+				std::cerr << " <";
+			else
+			{
+				if (root->right)
+					std::cerr << " /";
+				if (root->left)
+					std::cerr << " \\";
+			}
+			std::cerr << std::endl;
+
+			if (root->left && (lvl <= max || max == -1))
+				print_btree(root->left, 1, lvl + 1, max);
+			if (root == getRoot())
+			std::cerr << "******************************************************************************************************************" << std::endl << std::endl;
+
+
+		}
 
 
 	private:
@@ -737,9 +693,6 @@ namespace ft
 		node_type	*_end;
 
 	};
-
-
-
 
 }
 
