@@ -276,6 +276,7 @@ namespace ft
 			if (!count)
 				return;
 			
+			if (count >= _capacity)
 			reserve(_size + size_type(count));
 
 			for (difference_type i = difference_type(_size) - 1; i >= pos; i--)
