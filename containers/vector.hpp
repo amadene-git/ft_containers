@@ -7,6 +7,8 @@
 # include <iterator>//std::distance
 # include <typeinfo>//typeid
 
+#include <iostream>
+
 # include "../iterator/vector_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
 # include "../include/lexicographical_compare.hpp"
@@ -59,6 +61,7 @@ namespace ft
 		_size(0),
 		_capacity(0)
 		{
+
 		};
 		
 		explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
@@ -95,8 +98,9 @@ namespace ft
 		vector(const vector& x)
 		: _alloc(x._alloc), 
 		_size(x._size),
-		 _capacity(x._capacity)
+		 _capacity(x._size)
 		{
+			
 			this->_ptr = this->_alloc.allocate(this->_capacity);
 			for (size_type i = 0; i < x._size; ++i)
 				_alloc.construct(_ptr + i, *(x._ptr + i));
@@ -107,11 +111,14 @@ namespace ft
 			if (&rhs != this)
 			{
 				this->clear();
-				this->resize(rhs._size);
+				this->reserve(rhs._size);
+				_size = rhs._size;
+				std::cerr << "lol" << std::endl;
 				for (difference_type i = 0; i < difference_type(_size); ++i)
 				{
-					_alloc.destroy(_ptr + i);
+					// _alloc.destroy(_ptr + i);
 					_alloc.construct(_ptr + i, *(rhs.begin() + i));
+					// *(_ptr + i) = *(rhs.begin() + i);
 				}
 			}
 			return (*this);
