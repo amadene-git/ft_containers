@@ -133,20 +133,22 @@ void	insert_tests()
 
 	test.insert(test.begin(), 200, 12);
 	print_vector<T>(test);
+	std::cout << "insert 200 30" << std::endl;
 	test.insert(test.begin() + 12, 200, 30);
 	print_vector<T>(test);
-	// test.insert(test.end(), 12, 50);
-	// print_vector<T>(test);
-	// test.insert(test.end() - 1, 0, 60);
-	// print_vector<T>(test);
-	// test.insert(test.end() - 1, 1, 70);
-	// print_vector<T>(test);
-	// test.insert(test.begin() + 412, test2.begin(), test2.end());
-	// print_vector<T>(test);
-	// test.insert(test.begin() + 6, test2.begin(), test2.end());
-	// print_vector<T>(test);
-	// test.insert(test.end(), test2.begin(), test2.end());
-	// print_vector<T>(test);
+	std::cout << "insert 12 50" << std::endl;
+	test.insert(test.end(), 12, 50);
+	print_vector<T>(test);
+	test.insert(test.end() - 1, 0, 60);
+	print_vector<T>(test);
+	test.insert(test.end() - 1, 1, 70);
+	print_vector<T>(test);
+	test.insert(test.begin() + 412, test2.begin(), test2.end());
+	print_vector<T>(test);
+	test.insert(test.begin() + 6, test2.begin(), test2.end());
+	print_vector<T>(test);
+	test.insert(test.end(), test2.begin(), test2.end());
+	print_vector<T>(test);
 }
 
 template <class T>

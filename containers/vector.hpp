@@ -113,7 +113,7 @@ namespace ft
 				this->clear();
 				this->reserve(rhs._size);
 				_size = rhs._size;
-				std::cerr << "lol" << std::endl;
+				// std::cerr << "lol" << std::endl;
 				for (difference_type i = 0; i < difference_type(_size); ++i)
 				{
 					// _alloc.destroy(_ptr + i);
@@ -276,8 +276,12 @@ namespace ft
 			if (!count)
 				return;
 			
-			if (count >= _capacity)
-			reserve(_size + size_type(count));
+			if (_size + size_type(count) >= _capacity * 2)
+				reserve(_size + size_type(count));
+			else if (_size + size_type(count) > _capacity)
+				reserve(_size * 2);
+
+
 
 			for (difference_type i = difference_type(_size) - 1; i >= pos; i--)
 			{
