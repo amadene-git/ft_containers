@@ -340,15 +340,15 @@ namespace ft
 				return (ft::make_pair<iterator, bool>(*_root, true));
 			}
 
-			// ft::pair<iterator, bool> pr;
-			// node_type *root = find(value);
+			ft::pair<iterator, bool> pr;
+			node_type *root = find(value);
 			
-			// if (!root)
-			// 	pr = insert_AVL_rec(value, **_root);
-			// else
-			// 	pr = ft::make_pair(root, false);
+			if (!root)
+				pr = insert_AVL_rec(value, **_root);
+			else
+				pr = ft::make_pair(root, false);
 
-			// return (pr);
+			return (pr);
 			
 			return (insert_AVL_ite(value, *_root));
 		};

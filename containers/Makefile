@@ -35,7 +35,9 @@ DEP_TEST		= $(OBJS_TEST:%.o=%.d)
 
 
 test					:   re ${NAME_TEST}
+							@echo exec ft...
 							@./${NAME}	> ft.ret
+							@echo exec std...
 							@./${NAME_TEST}	> std.ret
 							diff ft.ret std.ret
 					#		@make fclean
