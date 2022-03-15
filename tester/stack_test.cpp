@@ -2,7 +2,7 @@
 
 void	stack_test()
 {
-	std::cout << 			"//MAP" << std::endl;
+	std::cout << 			"//STACK" << std::endl;
 	std::cout << "\t" <<	"//CONSTRUCTOR" << std::endl;
     {
         std::deque<int> mydeque (3,100);          // deque with 3 elements

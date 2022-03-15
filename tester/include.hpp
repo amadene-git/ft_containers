@@ -7,6 +7,8 @@
 # include <typeinfo>//for iterator_traits test
 
 # ifndef NAMESPACE
+#  define   NAMESPACE ft
+#  define   IS_FT 1
 
 //containers
 #  include  "../containers/vector.hpp"
@@ -21,10 +23,10 @@
 #  include  "../include/lexicographical_compare.hpp"
 #  include  "../include/pair.hpp"
 
-
-#  define   NAMESPACE ft
  
 # else
+#  define   IS_FT 0
+
 
 //containers
 #  include  <vector>
