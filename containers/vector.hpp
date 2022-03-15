@@ -104,12 +104,9 @@ namespace ft
 				this->clear();
 				this->reserve(rhs._size);
 				_size = rhs._size;
-				// std::cerr << "lol" << std::endl;
 				for (difference_type i = 0; i < difference_type(_size); ++i)
 				{
-					// _alloc.destroy(_ptr + i);
 					_alloc.construct(_ptr + i, *(rhs.begin() + i));
-					// *(_ptr + i) = *(rhs.begin() + i);
 				}
 			}
 			return (*this);

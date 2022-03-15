@@ -14,24 +14,27 @@ int main()
 	utils_test();
 
 
-	if (IS_FT)
-		std::cout << "ft :" << std::endl;
-	else if (!IS_FT) 
-		std::cout << "std :" << std::endl;
+	// if (IS_FT)
+	// 	std::cout << "ft :" << std::endl;
+	// else if (!IS_FT) 
+	// 	std::cout << "std :" << std::endl;
 
-	struct timeval tv1;
-	struct timeval tv2;
+	// struct timeval tv1;
+	// struct timeval tv2;
 
-	gettimeofday(&tv1, NULL);
+	// gettimeofday(&tv1, NULL);
 
-	NAMESPACE::map<unsigned int, unsigned int>	mymap;
+	// NAMESPACE::map<unsigned int, unsigned int>	mymap;
 
-	for(unsigned int i = 0; i < 500000000 ; ++i)
-		mymap.insert(NAMESPACE::make_pair(i, i));
+	// for(unsigned int i = 0; i < 5000000 ; ++i)
+	// 	mymap.insert(NAMESPACE::make_pair(i, i));
 
-	gettimeofday(&tv2, NULL);
+	// for(unsigned int i = 0; i < 5000000 ; ++i)
+	// 	mymap.erase(--mymap.end());
+
+	// gettimeofday(&tv2, NULL);
 	
-	std::cout << (tv2.tv_sec * 1000000 + tv2.tv_usec) - (tv1.tv_sec * 1000000 + tv1.tv_usec) << std::endl;
+	// std::cout << (tv2.tv_sec * 1000000 + tv2.tv_usec) - (tv1.tv_sec * 1000000 + tv1.tv_usec) << std::endl;
 
 	return (0);
 }

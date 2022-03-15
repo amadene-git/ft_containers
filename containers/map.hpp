@@ -112,7 +112,7 @@ namespace ft
 
 	bool		empty() const		{ return (!_size); };
 	size_type	size() const		{ return (_size); };
-	size_type	max_size() const	{ return (std::allocator< ft::Alloc_Node<value_type> >().max_size()); };// <- c'est temporaire hein... et surtout degueulasse 
+	size_type	max_size() const	{ return (std::allocator< ft::Alloc_Node<value_type> >().max_size()); };
 
 //	MODIFIERS
 
