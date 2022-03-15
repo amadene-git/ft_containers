@@ -35,7 +35,7 @@ namespace ft
 		void	push(value_type const &val) { _container.push_back(val); };
 		void	pop(void) 					{ _container.pop_back(); };
 
-	protected:
+	private:
 		Container _container;
 	};
 

@@ -7,7 +7,7 @@ TEST_FLAGS = -D NAMESPACE=std
 
 
 
-SRCS = main.cpp vector_test.cpp
+SRCS = main.cpp vector_test.cpp map_test.cpp stack_test.cpp utils_test.cpp
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 OBJS_DIR = ./objs

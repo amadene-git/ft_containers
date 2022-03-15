@@ -1,13 +1,10 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-# include <memory>
-# include <algorithm>
-# include <stdexcept>
+# include <memory>//std::allocator
+# include <stdexcept>//std::out_of_range
 # include <iterator>//std::distance
-# include <typeinfo>//typeid
 
-#include <iostream>
 
 # include "../iterator/vector_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
@@ -16,12 +13,6 @@
 # include "../include/enable_if.hpp"
 # include "../include/is_integral.hpp"
 
-
-template<class T>
-T*	get_addr(T &ref)
-{
-	return (&ref);
-}
 
 namespace ft
 {
@@ -80,7 +71,7 @@ namespace ft
 
 		template <class InputIterator>
         vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)//A CORRIGER !!!
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
 		: _alloc(alloc), 
 		_size(size_type(std::distance<InputIterator>(first, last))),
 		 _capacity(_size)

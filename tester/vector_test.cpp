@@ -175,7 +175,7 @@ void    vector_test(void)
 	}
 
 
-	std::cout << std::endl << std::endl << "//	ACCES";
+	std::cout << std::endl << "//	ACCES";
 	{
 		std::cout << std::endl << "//		OPERATOR []" << std::endl;
 		{
@@ -295,54 +295,29 @@ void    vector_test(void)
 
 			std::cout << "The elements of myvector add up to " << sum << '\n';
 		}
-		std::cout << std::endl << "//		SWAP" << std::endl;
-		{
-			NAMESPACE::vector<int> foo (4,100);   // three ints with a value of 100
-			NAMESPACE::vector<int> bar (16,200);   // five ints with a value of 200
-
-			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
-
-			foo.swap(bar);
-
-			std::cout << "foo contains:";
-			for (unsigned i=0; i<foo.size(); i++)
-				std::cout << ' ' << foo[i];
-			std::cout << '\n';
-
-			std::cout << "bar contains:";
-			for (unsigned i=0; i<bar.size(); i++)
-				std::cout << ' ' << bar[i];
-			std::cout << '\n';
-			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
-
-		}
 		std::cout << std::endl << "//		INSERT" << std::endl;
 		{
-			NAMESPACE::vector<int> myvector (8,100);
-			NAMESPACE::vector<int>::iterator it;
+			NAMESPACE::vector<int> myvector (3,100);
+ 			NAMESPACE::vector<int>::iterator it;
 
-			it = myvector.begin();
-			it += 3;
-			it = myvector.insert ( it , 200 );
+ 			it = myvector.begin();
+ 			it = myvector.insert ( it , 200 );
 
+ 			myvector.insert (it,2,300);
 
-			myvector.insert (it,42,300);
+ 			// "it" no longer valid, get a new one:
+ 			it = myvector.begin();
 
-			// "it" no longer valid, get a new one:
-			it = myvector.begin();
+ 			NAMESPACE::vector<int> anothervector (2,400);
+ 			myvector.insert (it+2,anothervector.begin(),anothervector.end());
 
-			NAMESPACE::vector<int> anothervector (2,400);
-			myvector.insert (it+2,anothervector.begin(),anothervector.end());
+ 			int myarray [] = { 501,502,503 };
+ 			myvector.insert (myvector.begin(), myarray, myarray+3);
 
-			//			int myarray [] = { 501,502,503 };
-			//			myvector.insert (myvector.begin(), myarray, myarray+3);
-
-			std::cout << "myvector contains:";
-			for (it=myvector.begin(); it<myvector.end(); it++)
-				std::cout << ' ' << *it;
-			std::cout << '\n';
-
-			std::cout << myvector.size() << " " << myvector.capacity() << std::endl;
+ 			std::cout << "myvector contains:";
+ 			for (it=myvector.begin(); it<myvector.end(); it++)
+ 				std::cout << ' ' << *it;
+ 			std::cout << '\n';
 
 		}
 		std::cout << std::endl << "//		ERASE" << std::endl;
@@ -363,6 +338,27 @@ void    vector_test(void)
 				std::cout << ' ' << myvector[i];
 			std::cout << '\n';
 			std::cout << myvector.size() << " " << myvector.capacity() << std::endl;
+		}
+		std::cout << std::endl << "//		SWAP" << std::endl;
+		{
+			NAMESPACE::vector<int> foo (4,100);   // three ints with a value of 100
+			NAMESPACE::vector<int> bar (16,200);   // five ints with a value of 200
+
+			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
+
+			foo.swap(bar);
+
+			std::cout << "foo contains:";
+			for (unsigned i=0; i<foo.size(); i++)
+				std::cout << ' ' << foo[i];
+			std::cout << '\n';
+
+			std::cout << "bar contains:";
+			for (unsigned i=0; i<bar.size(); i++)
+				std::cout << ' ' << bar[i];
+			std::cout << '\n';
+			std::cout << "foo " << foo.capacity()<<  "; bar " << bar.capacity() << std::endl; 
+
 		}
 		std::cout << std::endl << "//		CLEAR" << std::endl;
 		{
@@ -386,6 +382,7 @@ void    vector_test(void)
 			std::cout << '\n';
 		}
 	}
+
 
 
 	std::cout << std::endl << std::endl << "//	ALLOCATOR" << std::endl;
