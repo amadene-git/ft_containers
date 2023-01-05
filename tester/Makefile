@@ -17,12 +17,12 @@ HEADER = -I .
 all				: 	${NAME}
 $(NAME) 		: 	$(OBJS)	
 						@mkdir -p $(@D)
-						@$(CC) $(CC_FLAGS) $^ -o $@
+						$(CC) $(CC_FLAGS) $^ -o $@
 						@echo Compiling...
 -include $(DEP)
 $(OBJS_DIR)/%.o	:	%.cpp
 						@mkdir -p $(@D)
-						@$(CC) $(CC_FLAGS) ${HEADER} -MMD -c $< -o $@
+						$(CC) $(CC_FLAGS) ${HEADER} -MMD -c $< -o $@
 
 
 #********************** TEST *******************************************************
@@ -44,13 +44,13 @@ test					: all ${NAME_TEST}
 
 ${NAME_TEST}			: ${OBJS_TEST}
 							@mkdir -p $(@D)
-							@$(CC) $(CC_FLAGS) ${TEST_FLAGS} $^ -o $@
+							$(CC) $(CC_FLAGS) ${TEST_FLAGS} $^ -o $@
 							@echo Compiling test...
 
 -include $(DEP_TEST)
 $(OBJS_DIR_TEST)/%.o	: %.cpp
 							@mkdir -p $(@D)
-							@$(CC) $(CC_FLAGS) ${TEST_FLAGS} ${HEADER} -MMD -c $< -o $@
+							$(CC) $(CC_FLAGS) ${TEST_FLAGS} ${HEADER} -MMD -c $< -o $@
 
 
 

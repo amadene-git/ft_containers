@@ -1,6 +1,10 @@
 #ifndef PAIR_HPP
 #define PAIR_HPP
 
+//for is_pair<T>
+#include "integral_constant.hpp"
+
+
 namespace ft
 {
     template <class T1, class T2>
@@ -64,6 +68,10 @@ namespace ft
 	template <class T1, class T2>
 	  bool operator>= (const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs)
 	{ return !(lhs<rhs); }
+
+	template <class T> struct is_pair									: false_type {};
+	template <class T1, class T2> struct is_pair<ft::pair<T1, T2> > 	: true_type {};	
+	template <class T1, class T2> struct is_pair<std::pair<T1, T2> > 	: true_type {};	
 
 
 }

@@ -1,17 +1,20 @@
 #include "include.hpp"
 #include <sys/time.h>
 
+
+
+
 int main()
 {
 
 
-	vector_test();
-	std::cout << std::endl << std::endl;
-	map_test();
-	std::cout << std::endl << std::endl;
-	stack_test();
-	std::cout << std::endl << std::endl;
-	utils_test();
+	// vector_test();
+	// std::cout << std::endl << std::endl;
+	// map_test();
+	// std::cout << std::endl << std::endl;
+	// stack_test();
+	// std::cout << std::endl << std::endl;
+	// utils_test();
 
 
 	// if (IS_FT)
@@ -24,10 +27,10 @@ int main()
 
 	// gettimeofday(&tv1, NULL);
 
-	// NAMESPACE::map<unsigned int, unsigned int>	mymap;
+	ft::map<unsigned int, unsigned int>	mymap;
 
-	// for(unsigned int i = 0; i < 5000000 ; ++i)
-	// 	mymap.insert(NAMESPACE::make_pair(i, i));
+	for(unsigned int i = 0; i < 500 ; ++i)
+		mymap.insert(NAMESPACE::make_pair(i, i));
 
 	// for(unsigned int i = 0; i < 5000000 ; ++i)
 	// 	mymap.erase(--mymap.end());

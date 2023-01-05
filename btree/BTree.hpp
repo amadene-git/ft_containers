@@ -5,6 +5,9 @@
 #include "../include/pair.hpp"
 #include "../include/enable_if.hpp"
 
+//pour le print_btree_png
+#include "../include/utils.hpp"
+#include <cstdlib>
 
 namespace ft
 {
@@ -644,6 +647,107 @@ namespace ft
 			return (node_alloc().max_size());
 		};
 	
+
+//********************** PRINT & CHECK BTREE ****************************************************************************
+        int ncount;
+        std::string dotf;
+
+    	void gendot(ft::Node<T> *root = NULL, int id = 0)
+		{
+
+    	    if (root == NULL)
+			{
+    	        ncount = 0;
+				root = this->getRoot();
+			}
+    	    dotf += "  node" + ft::to_str(id) + "[label=\"" + ft::to_str(root->data) + "\"]\n";
+
+			// std::cout << "ncount = " << ncount << "left: " << root->left << "right: " << root->right << std::endl;
+
+    	    if (root->left)
+			{
+    	        ncount += 1;
+    	        dotf += "  node"+ ft::to_str(id) + " -> node" + ft::to_str(ncount) + "\n";
+    	        this->gendot(root->left, ncount);
+			}
+			if (root->right)
+			{
+    	        ncount += 1;
+    	        dotf += "  node"+ ft::to_str(id) + " -> node" + ft::to_str(ncount) + "\n";
+    	        this->gendot(root->right, ncount);
+			}
+		}
+	    void print_btree_png()
+		{
+	        dotf = "digraph astgraph {\n\
+  node [shape=none, fontsize=12, fontname=\"Courier\", height=.1];\n\
+  ranksep=.5;\n\
+  edge [arrowsize=.5]\n\n";
+			
+
+	        this->gendot();
+
+	        dotf += "\n\n}";
+	        system(std::string("echo '" + ft::to_str(dotf) + "' > tmp.dot").c_str());
+	        system("dot -Tpng -o tree.png tmp.dot");
+	        system("xdg-open tree.png");
+	        system("rm -rf tmp.dot");
+		}
+
+
+		void	print_btree(ft::Node<T> *root = NULL, int a = 0, int lvl = 0, int max = -1)
+		{
+			if (!root)
+			{
+				root = getRoot();
+				if (!root)
+					return;
+			std::cerr << "******************************************************************************************************************" << std::endl;
+
+			}
+
+			if (root->right && (lvl <= max || max == -1))
+				print_btree(root->right, 0, lvl + 1, max);
+
+			for (int k = 1	; k < lvl; k++)
+				for (int i = 0; i < 20; i++)
+					std::cerr << " ";
+			if (lvl)
+			{
+				for (int i = 0; i < 20 - 5; i++)
+					std::cerr << " ";
+				if (a)
+					std::cerr << "\\";
+				else
+					std::cerr << "/";
+			}
+			if (root->parent)
+				std::cerr << "<" << root->parent->data.first;
+			else
+				std::cerr << "<nil";
+			std::cerr << "---<" << lvl << ">";
+			std::cerr << root->l << "-" << root->r;
+			std::cerr << "[" << root->data.first << ", " << root->data.second << "]";
+
+			if (root->right && root->left)
+				std::cerr << " <";
+			else
+			{
+				if (root->right)
+					std::cerr << " /";
+				if (root->left)
+					std::cerr << " \\";
+			}
+			std::cerr << std::endl;
+
+			if (root->left && (lvl <= max || max == -1))
+				print_btree(root->left, 1, lvl + 1, max);
+			if (root == getRoot())
+			std::cerr << "******************************************************************************************************************" << std::endl << std::endl;
+
+
+		}
+
 		// void	check_btree(node_type *root = NULL, std::string str = std::string())
 		// {
 		// 	if (!root)
@@ -662,60 +766,6 @@ namespace ft
 		// 		check_btree(root->right, str);
 		// 	if (root->left)
 		// 		check_btree(root->left, str);
-		// }
-		
-
-		// void	print_btree(ft::Node<T> *root = NULL, int a = 0, int lvl = 0, int max = -1)
-		// {
-		// 	if (!root)
-		// 	{
-		// 		root = getRoot();
-		// 		if (!root)
-		// 			return;
-		// 	std::cerr << "******************************************************************************************************************" << std::endl;
-
-		// 	}
-
-		// 	if (root->right && (lvl <= max || max == -1))
-		// 		print_btree(root->right, 0, lvl + 1, max);
-
-		// 	for (int k = 1	; k < lvl; k++)
-		// 		for (int i = 0; i < 20; i++)
-		// 			std::cerr << " ";
-		// 	if (lvl)
-		// 	{
-		// 		for (int i = 0; i < 20 - 5; i++)
-		// 			std::cerr << " ";
-		// 		if (a)
-		// 			std::cerr << "\\";
-		// 		else
-		// 			std::cerr << "/";
-		// 	}
-		// 	if (root->parent)
-		// 		std::cerr << "<" << root->parent->data.first;
-		// 	else
-		// 		std::cerr << "<nil";
-		// 	std::cerr << "---<" << lvl << ">";
-		// 	std::cerr << root->l << "-" << root->r;
-		// 	std::cerr << "[" << root->data.first << ", " << root->data.second << "]";
-
-		// 	if (root->right && root->left)
-		// 		std::cerr << " <";
-		// 	else
-		// 	{
-		// 		if (root->right)
-		// 			std::cerr << " /";
-		// 		if (root->left)
-		// 			std::cerr << " \\";
-		// 	}
-		// 	std::cerr << std::endl;
-
-		// 	if (root->left && (lvl <= max || max == -1))
-		// 		print_btree(root->left, 1, lvl + 1, max);
-		// 	if (root == getRoot())
-		// 	std::cerr << "******************************************************************************************************************" << std::endl << std::endl;
-
-
 		// }
 
 
